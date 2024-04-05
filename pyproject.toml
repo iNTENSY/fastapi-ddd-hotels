@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "fastapi-course"
+version = "0.1.0"
+description = ""
+authors = ["Dmitriy <ka1deo@mail.ru>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "0.105.0"
+uvicorn = "^0.29.0"
+alembic = "^1.13.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
