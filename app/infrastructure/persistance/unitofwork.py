@@ -1,16 +1,16 @@
-from sqlalchemy.ext.asyncio import AsyncConnection
+from psycopg import AsyncConnection
 
 from app.application.protocols.unitofwork import IUnitOfWork
 
 
-class UnitOfWork(IUnitOfWork):
+class UnitOfWorkImp(IUnitOfWork):
     __slots__ = ("connection",)
 
     def __init__(self, connection: AsyncConnection) -> None:
-        self.connection = connection
+        self._connection = connection
 
     async def commit(self) -> None:
-        await self.connection.commit()
+        await self._connection.commit()
 
     async def rollback(self) -> None:
-        await self.connection.rollback()
+        await self._connection.rollback()

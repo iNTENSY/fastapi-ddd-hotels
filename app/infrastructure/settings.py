@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
 
 
+# ./app/
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_FILE = os.path.join(BASE_DIR, ".env")
 
