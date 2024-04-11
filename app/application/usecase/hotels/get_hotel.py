@@ -1,25 +1,25 @@
-from app.application.contracts.hotels.get_hotels_request import GetHotelRequest, GetHotelListRequest
+from app.application.contracts.hotels.get_hotels_request import GetHotelListRequest, GetHotelRequest
 from app.application.contracts.hotels.hotels_response import HotelsListResponse, HotelResponse
-from app.infrastructure.persistance.repositories.hotel_repository import HotelRepositoryImp
-from app.infrastructure.persistance.unitofwork import UnitOfWorkImp
+from app.application.protocols.interactor import Interactor
+from app.application.protocols.unitofwork import IUnitOfWork
+from app.domain.hotels.entity import Hotels
+from app.domain.hotels.repository import IHotelRepository
 
 
-class GetHotelsUseCase:
-    def __init__(
-            self,
-            uow: UnitOfWorkImp,
-            hotels_repository: HotelRepositoryImp
-    ) -> None:
-        self.__uow = uow
+class GetHotelsUseCase(Interactor[GetHotelListRequest, HotelsListResponse]):
+    def __init__(self, hotels_repository: IHotelRepository) -> None:
         self._hotels_repository = hotels_repository
 
     async def __call__(self, request: GetHotelListRequest) -> HotelsListResponse:
-        # For test
-        hotels = HotelsListResponse(
-            items=[
-                HotelResponse(id=i, name=str(i), location=str(i), services=[str(i)], rooms_quantity=i, image_id=i)
-                for i in range(4)
-            ],
-            count=4
-        )
-        return hotels
+        hotels: list[Hotels] = await self._hotels_repository.find_all(**request.model_dump())
+        return HotelsListResponse(items=hotels,
+                                  count=len(hotels))
+
+
+class GetHotelUserCase(Interactor[GetHotelRequest, HotelResponse]):
+    def __init__(self, hotels_repository: IHotelRepository) -> None:
+        self._hotel_repository = hotels_repository
+
+    async def __call__(self, request: GetHotelRequest) -> HotelResponse:
+        hotel: list[Hotels] = await self._hotel_repository.filter_by(**request.model_dump())
+        return await hotel[0].to_pydantic_model()

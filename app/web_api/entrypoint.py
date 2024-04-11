@@ -3,12 +3,12 @@ from dishka.integrations.fastapi import setup_dishka
 
 from fastapi import FastAPI
 
-from app.infrastructure.ioc import create_container
+from app.infrastructure.di.main import container_factory
 from app.web_api.router.hotels import router
 
 
 app = FastAPI()
-container = create_container()
+container = container_factory()
 setup_dishka(container, app)
 
 

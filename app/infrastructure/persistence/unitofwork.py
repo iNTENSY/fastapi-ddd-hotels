@@ -1,4 +1,5 @@
 from psycopg import AsyncConnection
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.protocols.unitofwork import IUnitOfWork
 
@@ -6,11 +7,11 @@ from app.application.protocols.unitofwork import IUnitOfWork
 class UnitOfWorkImp(IUnitOfWork):
     __slots__ = ("connection",)
 
-    def __init__(self, connection: AsyncConnection) -> None:
+    def __init__(self, connection: AsyncSession) -> None:
         self._connection = connection
 
     async def commit(self) -> None:
-        await self._connection.commit()
+        await self.connection.commit()
 
     async def rollback(self) -> None:
-        await self._connection.rollback()
+        await self.connection.rollback()

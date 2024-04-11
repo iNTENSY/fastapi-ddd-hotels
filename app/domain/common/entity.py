@@ -10,4 +10,4 @@ updated_at = Annotated[datetime.datetime, mapped_column(server_default=text("TIM
 
 
 class DomainModel(DeclarativeBase):
-    id: DomainModelID
+    pass
