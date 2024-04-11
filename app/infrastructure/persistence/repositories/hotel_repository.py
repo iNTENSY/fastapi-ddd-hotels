@@ -1,4 +1,4 @@
-from typing import Sequence, Any
+from typing import Sequence
 
 from sqlalchemy import select, delete, update
 from sqlalchemy.dialects.postgresql import insert

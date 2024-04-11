@@ -1,4 +1,3 @@
-from psycopg import AsyncConnection
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.protocols.unitofwork import IUnitOfWork

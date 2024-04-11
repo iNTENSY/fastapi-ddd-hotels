@@ -1,4 +1,4 @@
-from typing import Protocol, Any
+from typing import Protocol
 
 from app.domain.hotels.entity import Hotels
 

@@ -1,8 +1,6 @@
-from app.application.contracts.hotels.create_hotel_request import CreateHotelRequest
 from app.application.contracts.hotels.get_hotels_request import GetHotelListRequest, GetHotelRequest
 from app.application.contracts.hotels.hotels_response import HotelsListResponse, HotelResponse
 from app.application.protocols.interactor import Interactor
-from app.application.protocols.unitofwork import IUnitOfWork
 from app.domain.hotels.entity import Hotels
 from app.domain.hotels.repository import IHotelRepository
 

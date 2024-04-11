@@ -1,14 +1,8 @@
-from typing import TYPE_CHECKING
-
 from sqlalchemy import JSON, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from app.application.contracts.hotels.hotels_response import HotelResponse
 from app.domain.common.entity import DomainModel, DomainModelID
-
-
-if TYPE_CHECKING:
-    from app.domain.rooms.entity import Rooms
 
 
 class Hotels(DomainModel):
@@ -21,7 +15,6 @@ class Hotels(DomainModel):
     rooms_quantity: Mapped[int]
     image_id: Mapped[int]
 
-    #rooms = relationship("Rooms", back_populates="hotel", lazy="dynamic")
     UniqueConstraint("name", "location", name="unique_name_location")
 
     def __str__(self) -> str:

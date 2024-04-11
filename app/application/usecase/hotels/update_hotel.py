@@ -14,7 +14,8 @@ class UpdateHotelUseCase(Interactor[UpdateHotelRequest, HotelResponse]):
         self._hotels_repository = hotels_repository
 
     async def __call__(self, request: UpdateHotelRequest, **kwargs) -> HotelResponse | None:
-        hotel: Hotels | None = await self._hotels_repository.update(data=request.model_dump(exclude_unset=True), id=kwargs.get("id"))
+        hotel: Hotels | None = await self._hotels_repository.update(data=request.model_dump(exclude_unset=True),
+                                                                    id=kwargs.get("id"))
         if not hotel:
             return None
         return await hotel.to_pydantic_model()
