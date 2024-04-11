@@ -8,7 +8,7 @@ class UnitOfWorkImp(IUnitOfWork):
     __slots__ = ("connection",)
 
     def __init__(self, connection: AsyncSession) -> None:
-        self._connection = connection
+        self.connection = connection
 
     async def commit(self) -> None:
         await self.connection.commit()

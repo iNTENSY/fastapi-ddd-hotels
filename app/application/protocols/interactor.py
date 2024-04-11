@@ -5,5 +5,5 @@ Response = TypeVar("Response", covariant=True)
 
 
 class Interactor(Generic[Request, Response], Protocol):
-    async def __call__(self, request: Request) -> Response:
+    async def __call__(self, request: Request, **kwargs) -> Response:
         raise NotImplementedError
