@@ -1,13 +1,12 @@
-import datetime
-from typing import Annotated
+from dataclasses import dataclass
+from typing import Generic, TypeVar
 
-from sqlalchemy import text
-from sqlalchemy.orm import mapped_column, DeclarativeBase
-
-DomainModelID = Annotated[int, mapped_column(primary_key=True, index=True, nullable=False)]
-created_at = Annotated[datetime.datetime, mapped_column(server_default=text("TIMEZONE('utc', now())"))]
-updated_at = Annotated[datetime.datetime, mapped_column(server_default=text("TIMEZONE('utc', now())"), onupdate=True)]
+from app.domain.common.value_object import DomainValueObject
 
 
-class DomainModel(DeclarativeBase):
-    pass
+EntityId = TypeVar("EntityId", bound=DomainValueObject)
+
+
+@dataclass
+class DomainEntity(Generic[EntityId]):
+    id: EntityId

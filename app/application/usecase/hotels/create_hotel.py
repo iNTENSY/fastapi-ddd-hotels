@@ -16,4 +16,4 @@ class CreateHotelUseCase(Interactor[CreateHotelRequest, HotelResponse]):
     async def __call__(self, request: CreateHotelRequest, **kwargs) -> HotelResponse:
         hotel: Hotels = await self._hotels_repository.create(request.model_dump())
         await self._uow.commit()
-        return await hotel.to_pydantic_model()
+        return await HotelResponse.create(hotel)

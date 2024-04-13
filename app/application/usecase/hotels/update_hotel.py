@@ -18,4 +18,5 @@ class UpdateHotelUseCase(Interactor[UpdateHotelRequest, HotelResponse]):
                                                                     id=kwargs.get("id"))
         if not hotel:
             return None
-        return await hotel.to_pydantic_model()
+        await self._uow.commit()
+        return await HotelResponse.create(hotel)

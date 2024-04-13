@@ -1,31 +1,82 @@
-from sqlalchemy import JSON, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from dataclasses import dataclass
 
-from app.application.contracts.hotels.hotels_response import HotelResponse
-from app.domain.common.entity import DomainModel, DomainModelID
+from app.domain.common.errors import DomainValidationError
+from app.domain.common.value_object import DomainValueObject
 
 
-class Hotels(DomainModel):
-    __tablename__ = "hotels"
+@dataclass(frozen=True)
+class HotelId:
+    value: int
 
-    id: Mapped[DomainModelID]
-    name: Mapped[str]
-    location: Mapped[str]
-    services: Mapped[list[str]] = mapped_column(JSON)
-    rooms_quantity: Mapped[int]
-    image_id: Mapped[int]
 
-    UniqueConstraint("name", "location", name="unique_name_location")
+@dataclass(frozen=True)
+class HotelName(DomainValueObject):
+    value: str
 
-    def __str__(self) -> str:
-        return f"Отель {self.name}"
+    def __post_init__(self) -> None:
+        if not self.value:
+            raise DomainValidationError("Hotel name is required.")
 
-    async def to_pydantic_model(self) -> HotelResponse:
-        return HotelResponse(
-            id=self.id,
-            name=self.name,
-            location=self.location,
-            services=self.services,
-            rooms_quantity=self.rooms_quantity,
-            image_id=self.image_id
+        if len(self.value) > 100:
+            raise DomainValidationError("Invalid hotel name. Hotel name must be less the 100 characters.")
+
+
+@dataclass(frozen=True)
+class HotelLocation(DomainValueObject):
+    value: str
+
+    def __post_init__(self) -> None:
+        if not self.value:
+            raise DomainValidationError("Hotel location is required.")
+
+
+@dataclass(frozen=True)
+class HotelServices(DomainValueObject):
+    value: list[str]
+
+    def __post_init__(self) -> None:
+        if not self.value:
+            raise DomainValidationError("Hotel services is required.")
+
+        if not all(self.value):
+            raise DomainValidationError("Hotel service has invalid data.")
+
+
+@dataclass(frozen=True)
+class HotelRoomQuantity(DomainValidationError):
+    value: int
+
+    def __post_init__(self) -> None:
+        if not self.value:
+            raise DomainValidationError("Provide the number of rooms in the hotel.")
+
+        if self.value < 0:
+            raise DomainValidationError("Rooms amount must be greater then 0")
+
+
+@dataclass
+class Hotels:
+    id: HotelId
+    name: HotelName
+    location: HotelLocation
+    services: HotelServices
+    rooms_quantity: HotelRoomQuantity
+    image_id: int
+
+    @staticmethod
+    async def create(
+            id: int,
+            name: str,
+            location: str,
+            services: list[str],
+            rooms_quantity: int,
+            image_id: int
+    ) -> "Hotels":
+        return Hotels(
+            id=HotelId(value=id),
+            name=HotelName(value=name),
+            location=HotelLocation(value=location),
+            services=HotelServices(value=services),
+            rooms_quantity=HotelRoomQuantity(value=rooms_quantity),
+            image_id=image_id
         )

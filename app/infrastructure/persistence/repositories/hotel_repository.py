@@ -6,6 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.hotels.entity import Hotels
 from app.domain.hotels.repository import IHotelRepository
+from app.infrastructure.persistence.mappers.hotel_mapper import hotel_from_dict_to_entity
+from app.infrastructure.persistence.models import HotelsModel
 
 
 class HotelRepositoryImp(IHotelRepository):
@@ -14,30 +16,34 @@ class HotelRepositoryImp(IHotelRepository):
 
     async def create(self, data: dict) -> Hotels:
         """Создание в БД."""
-        statement = insert(Hotels).values(**data).returning(Hotels)
+        statement = insert(HotelsModel).values(**data).returning(HotelsModel)
         result = (await self.connection.execute(statement)).scalar_one()
-        return result
+        return await hotel_from_dict_to_entity(result.__dict__)
 
-    async def find_all(self, limit: int, offset: int):
+    async def find_all(self, limit: int, offset: int) -> list[Hotels]:
         """Выбрать все отели из БД."""
-        statement = select(Hotels).limit(limit).offset(offset)
+        statement = select(HotelsModel).limit(limit).offset(offset)
         result = (await self.connection.execute(statement)).scalars().all()
-        return result
+        return [await hotel_from_dict_to_entity(hotel.__dict__) for hotel in result]
 
-    async def filter_by(self, **parameters) -> Sequence[Hotels]:
+    async def filter_by(self, **parameters) -> list[Hotels]:
         """Выбрать отели из БД с определенными параметрами."""
-        statement = select(Hotels).filter_by(**parameters)
+        statement = select(HotelsModel).filter_by(**parameters)
         result = (await self.connection.execute(statement)).scalars().all()
-        return result
+        return [await hotel_from_dict_to_entity(hotel.__dict__) for hotel in result]
 
-    async def delete(self, **parameters) -> Hotels:
+    async def delete(self, **parameters) -> Hotels | None:
         """Удалить отель по уникальному идентификатору из базы данных"""
-        statement = delete(Hotels).filter_by(**parameters).returning(Hotels)
+        statement = delete(HotelsModel).filter_by(**parameters).returning(HotelsModel)
         result = (await self.connection.execute(statement)).scalar_one_or_none()
-        return result
+        if result is None:
+            return None
+        return await hotel_from_dict_to_entity(result.__dict__)
 
-    async def update(self, data: dict, id: int) -> Hotels:
+    async def update(self, data: dict, id: int) -> Hotels | None:
         """Обновить отель по уникальному идентификатору"""
-        statement = update(Hotels).where(Hotels.id == id).values(**data).returning(Hotels)
+        statement = update(HotelsModel).where(HotelsModel.id == id).values(**data).returning(HotelsModel)
         result = (await self.connection.execute(statement)).scalar_one_or_none()
-        return result
+        if result is None:
+            return None
+        return await hotel_from_dict_to_entity(result.__dict__)

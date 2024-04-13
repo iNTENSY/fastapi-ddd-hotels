@@ -18,4 +18,4 @@ class DeleteHotelUseCase(Interactor[DeleteHotelRequest, HotelResponse]):
         if not hotel:
             return None
         await self._uow.commit()
-        return await hotel.to_pydantic_model()
+        return await HotelResponse.create(hotel)

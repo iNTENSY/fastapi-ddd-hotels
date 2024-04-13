@@ -27,7 +27,5 @@ class SqlalchemyProvider(Provider):
     async def provide_session(
         self, sessionmaker: async_sessionmaker[AsyncSession]
     ) -> AsyncIterable[AsyncSession]:
-        print("Создалась сессия!")
         async with sessionmaker() as session:
             yield session
-        print('Сессия завершилась')

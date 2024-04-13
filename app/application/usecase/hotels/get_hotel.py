@@ -9,18 +9,22 @@ class GetHotelsUseCase(Interactor[GetHotelListRequest, HotelsListResponse]):
     def __init__(self, hotels_repository: IHotelRepository) -> None:
         self._hotels_repository = hotels_repository
 
-    async def __call__(self, request: GetHotelListRequest, **kwargs) -> HotelsListResponse:
-        hotels: list[Hotels] = await self._hotels_repository.find_all(**request.model_dump())
-        return HotelsListResponse(items=hotels,
-                                  count=len(hotels))
+    async def __call__(self, request: GetHotelListRequest) -> HotelsListResponse:
+        hotels: list[Hotels] = await self._hotels_repository.find_all(limit=request.limit, offset=request.offset)
+        return HotelsListResponse(
+            items=[
+                await HotelResponse.create(hotel)
+                for hotel in hotels],
+            count=len(hotels)
+        )
 
 
 class GetHotelUserCase(Interactor[GetHotelRequest, HotelResponse]):
     def __init__(self, hotels_repository: IHotelRepository) -> None:
         self._hotel_repository = hotels_repository
 
-    async def __call__(self, request: GetHotelRequest, **kwargs) -> HotelResponse | None:
-        hotel: list[Hotels] | None = await self._hotel_repository.filter_by(**request.model_dump())
+    async def __call__(self, request: GetHotelRequest) -> HotelResponse | None:
+        hotel = await self._hotel_repository.filter_by(id=request.id)
         if not hotel:
             return None
-        return await hotel[0].to_pydantic_model()
+        return await HotelResponse.create(hotel[0])

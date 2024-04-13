@@ -1,10 +1,12 @@
-from pydantic import BaseModel, Field
+from dataclasses import dataclass, field
 
 
-class GetHotelListRequest(BaseModel):
-    limit: int = Field(default=20, ge=0)
-    offset: int = Field(default=0, ge=0)
+@dataclass(frozen=True)
+class GetHotelListRequest:
+    limit: int = field(default=20)
+    offset: int = field(default=0)
 
 
-class GetHotelRequest(BaseModel):
-    id: int = Field(ge=0)
+@dataclass(frozen=True)
+class GetHotelRequest:
+    id: int = field(default=0)

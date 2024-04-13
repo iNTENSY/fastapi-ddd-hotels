@@ -10,12 +10,9 @@ from alembic import context
 
 sys.path.insert(0, dirname(dirname(dirname(dirname(__file__)))))
 
-from app.domain.rooms.entity import Rooms  # noqa
-from app.domain.bookings.entity import Bookings  # noqa
-from app.domain.users.entity import Users  # noqa
-from app.domain.hotels.entity import Hotels  # noqa
-from app.domain.common.entity import DomainModel
 from app.infrastructure.settings import DATABASE_URI
+from app.infrastructure.persistence.models.base import Base
+from app.infrastructure.persistence.models import *  # noqa
 
 config = context.config
 section = config.config_ini_section
@@ -25,7 +22,7 @@ config.set_main_option("sqlalchemy.url", DATABASE_URI + "?async_fallback=True")
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-target_metadata = DomainModel.metadata
+target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
