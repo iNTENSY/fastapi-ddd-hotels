@@ -13,7 +13,7 @@ class CreateHotelUseCase(Interactor[CreateHotelRequest, HotelResponse]):
         self._uow = uow
         self._hotels_repository = hotels_repository
 
-    async def __call__(self, request: CreateHotelRequest, **kwargs) -> HotelResponse:
+    async def __call__(self, request: CreateHotelRequest) -> HotelResponse:
         hotel: Hotels = await self._hotels_repository.create(request.model_dump())
         await self._uow.commit()
         return await HotelResponse.create(hotel)

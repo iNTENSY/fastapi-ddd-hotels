@@ -1,9 +1,21 @@
+import os
+from pathlib import Path
 from typing import AsyncIterable
 
 from dishka import provide, Provider, Scope
+from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, AsyncSession, create_async_engine
 
-from app.infrastructure.database_config import DatabaseConfig
+from app.application.protocols.date_time import DateTimeProcessor
+from app.application.protocols.jwt_processor import JwtTokenProcessor
+from app.infrastructure.authentication.jwt_settings import JWTSettings
+from app.infrastructure.date_time_provider import SystemDateTimeProvider, Timezone
+from app.infrastructure.persistence.database_config import DatabaseConfig
+from app.infrastructure.settings import Settings
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+ENV_FILE = os.path.join(BASE_DIR, ".env")
+load_dotenv(ENV_FILE)
 
 
 class SqlalchemyProvider(Provider):
@@ -29,3 +41,23 @@ class SqlalchemyProvider(Provider):
     ) -> AsyncIterable[AsyncSession]:
         async with sessionmaker() as session:
             yield session
+
+
+class SettingsProvider(Provider):
+    @provide(scope=Scope.APP, provides=JWTSettings)
+    async def jwt_settings(self) -> JWTSettings:
+        return JWTSettings(
+            secret=os.environ.get("SECRET_KEY", default="useless-secret-key"),
+            expires_in=int(os.environ.get("EXPIRE_IN")),
+            algorithm=os.environ.get("ALGORITHM")
+        )
+
+    @provide(scope=Scope.APP, provides=Settings)
+    async def main_settings(self, db_config: DatabaseConfig, jwt_config: JWTSettings) -> Settings:
+        return Settings(db=db_config, jwt=jwt_config)
+
+
+class DateTimeProvider(Provider):
+    @provide(scope=Scope.APP, provides=DateTimeProcessor)
+    async def provide_date_time_processor(self) -> DateTimeProcessor:
+        return SystemDateTimeProvider(Timezone.UTC)
