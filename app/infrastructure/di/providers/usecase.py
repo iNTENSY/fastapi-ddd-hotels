@@ -9,9 +9,11 @@ from app.application.usecase.hotels.create_hotel import CreateHotelUseCase
 from app.application.usecase.hotels.delete_hotel import DeleteHotelUseCase
 from app.application.usecase.hotels.get_hotel import GetHotelsUseCase, GetHotelUserCase
 from app.application.usecase.hotels.update_hotel import UpdateHotelUseCase
+from app.application.usecase.users.delete_user import DeleteUserUseCase
+from app.application.usecase.users.get_user import GetUsersUseCase, GetUserUseCase
 from app.domain.hotels.repository import IHotelRepository
-from app.domain.users.repository import IUsersRepository
-from app.infrastructure.authentication.jwt_processor import JoseJWTProcessor
+from app.domain.users.repository import IUserRepository
+from app.infrastructure.authentication.jwt_processor import JwtTokenProcessorImp
 from app.infrastructure.persistence.repositories.hotel_repository import HotelRepositoryImp
 from app.infrastructure.persistence.repositories.users_repository import UsersRepositoryImp
 from app.infrastructure.persistence.unitofwork import UnitOfWorkImp
@@ -24,11 +26,11 @@ class UseCaseProvider(Provider):
     # Unit Of Work
     unit_of_work = provide(UnitOfWorkImp, provides=IUnitOfWork)
 
-    # Repositories & password hasher & JWT
+    # Repositories & other
     hotels_repository = provide(HotelRepositoryImp, provides=IHotelRepository)
-    users_repository = provide(UsersRepositoryImp, provides=IUsersRepository)
+    users_repository = provide(UsersRepositoryImp, provides=IUserRepository)
     password_hasher = provide(PasswordHasherImp, provides=IPasswordHasher)
-    token_processor = provide(JoseJWTProcessor)
+    token_processor = provide(JwtTokenProcessorImp)
 
     # Use case
     get_hotels = provide(GetHotelsUseCase)
@@ -39,3 +41,7 @@ class UseCaseProvider(Provider):
 
     auth_login = provide(Login)
     auth_register = provide(Register)
+
+    get_users = provide(GetUsersUseCase)
+    get_user = provide(GetUserUseCase)
+    delete_user = provide(DeleteUserUseCase)

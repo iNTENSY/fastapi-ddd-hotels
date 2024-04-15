@@ -13,7 +13,7 @@ from app.application.usecase.hotels.create_hotel import CreateHotelUseCase
 from app.application.usecase.hotels.delete_hotel import DeleteHotelUseCase
 from app.application.usecase.hotels.get_hotel import GetHotelsUseCase, GetHotelUserCase
 from app.application.usecase.hotels.update_hotel import UpdateHotelUseCase
-from app.domain.hotels.errors import HotelNotFound
+from app.domain.hotels.errors import HotelNotFoundError
 
 router = APIRouter(prefix="/hotels", tags=["Hotels"], route_class=DishkaRoute)
 
@@ -35,7 +35,7 @@ async def get_hotel(
 ) -> HotelResponse:
     response = await interactor(request)
     if response is None:
-        raise HotelNotFound
+        raise HotelNotFoundError
     return response
 
 
@@ -56,7 +56,7 @@ async def delete_hotel(
 ) -> HotelResponse:
     response = await interactor(request)
     if response is None:
-        raise HotelNotFound
+        raise HotelNotFoundError
     return response
 
 
@@ -69,5 +69,5 @@ async def update_hotel(
 ) -> HotelResponse:
     response = await update_hotel_interactor(update_hotel_request, id=id)
     if response is None:
-        raise HotelNotFound
+        raise HotelNotFoundError
     return response

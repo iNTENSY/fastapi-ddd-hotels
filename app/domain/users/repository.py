@@ -3,7 +3,7 @@ from typing import Protocol
 from app.domain.users.entity import Users
 
 
-class IUsersRepository(Protocol):
+class IUserRepository(Protocol):
     async def create(self, data: dict) -> Users: ...
 
     async def find_all(self, limit: int, offset: int) -> list[Users] | None: ...

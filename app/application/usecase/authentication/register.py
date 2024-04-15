@@ -3,13 +3,13 @@ from app.application.contracts.authentication.register_request import RegisterRe
 from app.application.protocols.interactor import Interactor
 from app.application.protocols.password_hasher import IPasswordHasher
 from app.application.protocols.unitofwork import IUnitOfWork
-from app.domain.users.repository import IUsersRepository
+from app.domain.users.repository import IUserRepository
 
 
 class Register(Interactor[RegisterRequest, AuthResponse]):
     def __init__(self,
                  uow: IUnitOfWork,
-                 users_repository: IUsersRepository,
+                 users_repository: IUserRepository,
                  password_hasher: IPasswordHasher) -> None:
         self._uow = uow
         self.users_repository = users_repository

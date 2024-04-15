@@ -4,13 +4,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.hotels.entity import Hotels
 from app.domain.users.entity import Users
-from app.domain.users.repository import IUsersRepository
+from app.domain.users.repository import IUserRepository
 from app.infrastructure.persistence.mappers.hotel_mapper import hotel_from_dict_to_entity
 from app.infrastructure.persistence.mappers.user_mapper import user_from_dict_to_entity
 from app.infrastructure.persistence.models import HotelsModel, UsersModel
 
 
-class UsersRepositoryImp(IUsersRepository):
+class UsersRepositoryImp(IUserRepository):
     def __init__(self, connection: AsyncSession):
         self.connection = connection
 

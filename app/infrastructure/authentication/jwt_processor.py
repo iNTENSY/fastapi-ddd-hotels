@@ -10,7 +10,7 @@ from app.domain.users.errors import InvalidTokenError
 from app.infrastructure.authentication.jwt_settings import JWTSettings
 
 
-class JoseJWTProcessor(JwtTokenProcessor):
+class JwtTokenProcessorImp(JwtTokenProcessor):
     def __init__(self, jwt_options: JWTSettings, date_time_provider: DateTimeProcessor):
         self._jwt_options = jwt_options
         self.date_time_provider = date_time_provider
