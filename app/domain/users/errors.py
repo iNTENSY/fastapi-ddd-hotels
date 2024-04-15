@@ -14,3 +14,13 @@ class UserNotFoundError(DomainError):
 class InvalidUserDataError(DomainError):
     def __init__(self):
         super().__init__(message="Invalid user data")
+
+
+class UserIsNotAuthorizedError(DomainError):
+    def __init__(self):
+        super().__init__(message="User is not authorized")
+
+
+class UserBadPermissionError(DomainError):
+    def __init__(self):
+        super().__init__(message="User has bad permission")

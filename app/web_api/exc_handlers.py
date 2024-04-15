@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 
 from app.domain.common.errors import DomainValidationError
 from app.domain.hotels.errors import HotelNotFoundError
-from app.domain.users.errors import InvalidTokenError, UserNotFoundError, InvalidUserDataError
+from app.domain.users.errors import InvalidTokenError, UserNotFoundError, InvalidUserDataError, UserBadPermissionError
 
 
 async def validation_error_exc_handler(request: Request, exc: DomainValidationError):
@@ -24,6 +24,10 @@ async def user_invalid_data_exc_handler(request: Request, exc: InvalidUserDataEr
     return JSONResponse(content={"detail": exc.message}, status_code=HTTPStatus.BAD_REQUEST)
 
 
+async def user_bad_permission_exv_handler(request: Request, exc: UserBadPermissionError):
+    return JSONResponse(content={"detail": exc.message}, status_code=HTTPStatus.FORBIDDEN)
+
+
 async def jwt_invalid_exc_handler(request: Request, exc: InvalidTokenError):
     return JSONResponse(content={"detail": exc.message}, status_code=HTTPStatus.FORBIDDEN)
 
@@ -34,4 +38,5 @@ def init_exc_handlers(app: FastAPI) -> None:
     app.add_exception_handler(HotelNotFoundError, hotel_not_found_exc_handler)
     app.add_exception_handler(UserNotFoundError, user_not_found_exc_handler)
     app.add_exception_handler(InvalidUserDataError, user_invalid_data_exc_handler)
+    app.add_exception_handler(UserBadPermissionError, user_bad_permission_exv_handler)
     app.add_exception_handler(InvalidTokenError, jwt_invalid_exc_handler)
