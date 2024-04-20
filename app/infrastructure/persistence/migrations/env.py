@@ -1,7 +1,9 @@
+import os
 import sys
 
 from logging.config import fileConfig
 from os.path import dirname
+from dotenv import load_dotenv
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -10,14 +12,15 @@ from alembic import context
 
 sys.path.insert(0, dirname(dirname(dirname(dirname(__file__)))))
 
-from app.infrastructure.settings import DATABASE_URI
 from app.infrastructure.persistence.models.base import Base
 from app.infrastructure.persistence.models import *  # noqa
 
 config = context.config
 section = config.config_ini_section
 
-config.set_main_option("sqlalchemy.url", DATABASE_URI + "?async_fallback=True")
+load_dotenv(".env")
+
+config.set_main_option("sqlalchemy.url", os.environ.get("DATABASE_URI") + "?async_fallback=True")
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)

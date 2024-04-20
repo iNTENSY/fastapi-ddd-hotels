@@ -3,13 +3,13 @@ import datetime
 from sqlalchemy import ForeignKey, Date, Computed
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.infrastructure.persistence.models.base import Base, intpk
+from app.infrastructure.persistence.models.base import Base, intpk, uuidpk
 
 
 class BookingsModel(Base):
     __tablename__ = "bookings"
 
-    id: Mapped[intpk]
+    id: Mapped[uuidpk]
 
     room_id: Mapped[int] = mapped_column(ForeignKey("rooms.id", ondelete="CASCADE"))
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))

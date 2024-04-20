@@ -1,14 +1,16 @@
+import uuid
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class UserID:
-    value: int
+    value: uuid.UUID
 
 
 @dataclass(frozen=True)
 class UserEmail:
     value: str
+
 
 @dataclass
 class Users:
@@ -18,12 +20,11 @@ class Users:
 
     @staticmethod
     async def create(
-            id: int,
             email: str,
             hashed_password: str
     ) -> "Users":
         return Users(
-            id=UserID(value=id),
+            id=UserID(value=uuid.uuid4()),
             email=UserEmail(value=email),
             hashed_password=hashed_password
         )

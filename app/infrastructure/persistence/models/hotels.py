@@ -2,13 +2,13 @@ from sqlalchemy import UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.infrastructure.persistence.models.base import Base, intpk
+from app.infrastructure.persistence.models.base import Base, intpk, uuidpk
 
 
 class HotelsModel(Base):
     __tablename__ = "hotels"
 
-    id: Mapped[intpk]
+    id: Mapped[uuidpk]
     name: Mapped[str]
     location: Mapped[str]
     services: Mapped[list[str]] = mapped_column(JSON)

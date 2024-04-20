@@ -1,3 +1,4 @@
+import uuid
 from dataclasses import dataclass
 
 from app.domain.common.errors import DomainValidationError
@@ -6,7 +7,7 @@ from app.domain.common.value_object import DomainValueObject
 
 @dataclass(frozen=True)
 class HotelId:
-    value: int
+    value: uuid.UUID
 
 
 @dataclass(frozen=True)
@@ -65,7 +66,6 @@ class Hotels:
 
     @staticmethod
     async def create(
-            id: int,
             name: str,
             location: str,
             services: list[str],
@@ -73,7 +73,7 @@ class Hotels:
             image_id: int
     ) -> "Hotels":
         return Hotels(
-            id=HotelId(value=id),
+            id=HotelId(value=uuid.uuid4()),
             name=HotelName(value=name),
             location=HotelLocation(value=location),
             services=HotelServices(value=services),
