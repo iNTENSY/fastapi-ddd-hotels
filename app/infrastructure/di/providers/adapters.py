@@ -4,12 +4,15 @@ from typing import AsyncIterable
 
 from dishka import provide, Provider, Scope
 from dotenv import load_dotenv
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, AsyncSession, create_async_engine
+from redis import asyncio as aioredis
 
 from app.application.protocols.date_time import DateTimeProcessor
-from app.application.protocols.jwt_processor import JwtTokenProcessor
 from app.infrastructure.authentication.jwt_settings import JWTSettings
-from app.infrastructure.date_time_provider import SystemDateTimeProvider, Timezone
+from app.infrastructure.persistence.date_time_config import SystemDateTimeProvider, Timezone
+from app.infrastructure.persistence.redis_config import RedisSettings
 from app.infrastructure.persistence.database_config import DatabaseConfig
 from app.infrastructure.settings import Settings
 
@@ -52,9 +55,16 @@ class SettingsProvider(Provider):
             algorithm=os.environ.get("ALGORITHM")
         )
 
+    @provide(scope=Scope.APP, provides=RedisSettings)
+    async def provide_redis_settings(self) -> RedisSettings:
+        return RedisSettings(host="localhost", port=6379)
+
     @provide(scope=Scope.APP, provides=Settings)
-    async def main_settings(self, db_config: DatabaseConfig, jwt_config: JWTSettings) -> Settings:
-        return Settings(db=db_config, jwt=jwt_config)
+    async def main_settings(self,
+                            db_config: DatabaseConfig,
+                            jwt_config: JWTSettings,
+                            redis_config: RedisSettings) -> Settings:
+        return Settings(db=db_config, jwt=jwt_config, redis=redis_config)
 
 
 class DateTimeProvider(Provider):

@@ -1,11 +1,16 @@
 import uvicorn
-from dishka.integrations.fastapi import setup_dishka
+from dishka import FromDishka
 
-from fastapi import FastAPI
+from dishka.integrations.fastapi import setup_dishka
+from fastapi import FastAPI, Depends
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from redis import asyncio as aioredis
 
 from app.infrastructure.di.main import container_factory
 from app.web_api.exc_handlers import init_exc_handlers
 from app.web_api.router.v1.routers import v1_routers
+from app.infrastructure.persistence.redis_config import RedisSettings
 
 
 def init_di(app: FastAPI) -> None:
@@ -19,6 +24,12 @@ def init_routers(app: FastAPI) -> None:
     app.include_router(v1_routers)
 
 
+def startup_event() -> None:
+    """Start up event."""
+    aior = aioredis.from_url(RedisSettings(host="localhost", port=6379).url)
+    FastAPICache.init(RedisBackend(aior), prefix="cache")
+
+
 def app_factory() -> FastAPI:
     """Entrypoint factory."""
     app = FastAPI()
@@ -26,6 +37,8 @@ def app_factory() -> FastAPI:
     init_di(app)
     init_exc_handlers(app)
     init_routers(app)
+
+    app.on_event("startup")(startup_event)
     return app
 
 

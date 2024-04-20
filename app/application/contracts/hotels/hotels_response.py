@@ -14,8 +14,8 @@ class HotelResponse(BaseModel):
     class Config:
         from_attributes = True
 
-    @classmethod
-    async def create(cls, hotel: Hotels) -> "HotelResponse":
+    @staticmethod
+    async def create(hotel: Hotels) -> "HotelResponse":
         return HotelResponse(
             id=hotel.id.value,
             name=hotel.name.value,

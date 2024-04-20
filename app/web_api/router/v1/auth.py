@@ -12,7 +12,6 @@ from app.application.contracts.authentication.register_request import RegisterRe
 from app.application.usecase.authentication.login import Login
 from app.application.usecase.authentication.register import Register
 from app.domain.users.entity import UserID, UserEmail
-from app.domain.users.errors import InvalidTokenError
 from app.infrastructure.authentication.jwt_processor import JwtTokenProcessorImp
 
 router = APIRouter(prefix="/auth", tags=["Auth"], route_class=DishkaRoute)

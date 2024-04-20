@@ -20,6 +20,7 @@ flake8 = "^7.0.0"
 python-jose = "^3.3.0"
 bcrypt = "^4.1.2"
 python-multipart = "^0.0.9"
+fastapi-cache2 = {extras = ["redis"], version = "^0.2.1"}
 
 
 [build-system]

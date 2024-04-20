@@ -1,6 +1,5 @@
 from dishka import Provider, Scope, provide
 
-from app.application.protocols.jwt_processor import JwtTokenProcessor
 from app.application.protocols.password_hasher import IPasswordHasher
 from app.application.protocols.unitofwork import IUnitOfWork
 from app.application.usecase.authentication.login import Login
@@ -9,12 +8,16 @@ from app.application.usecase.hotels.create_hotel import CreateHotelUseCase
 from app.application.usecase.hotels.delete_hotel import DeleteHotelUseCase
 from app.application.usecase.hotels.get_hotel import GetHotelsUseCase, GetHotelUserCase
 from app.application.usecase.hotels.update_hotel import UpdateHotelUseCase
+from app.application.usecase.rooms.create_room import CreateRoomUseCase
+from app.application.usecase.rooms.get_room import GetRoomUseCase, GetRoomsUseCase
 from app.application.usecase.users.delete_user import DeleteUserUseCase
 from app.application.usecase.users.get_user import GetUsersUseCase, GetUserUseCase
 from app.domain.hotels.repository import IHotelRepository
+from app.domain.rooms.repository import IRoomRepository
 from app.domain.users.repository import IUserRepository
 from app.infrastructure.authentication.jwt_processor import JwtTokenProcessorImp
 from app.infrastructure.persistence.repositories.hotel_repository import HotelRepositoryImp
+from app.infrastructure.persistence.repositories.room_repository import RoomRepositoryImp
 from app.infrastructure.persistence.repositories.users_repository import UsersRepositoryImp
 from app.infrastructure.persistence.unitofwork import UnitOfWorkImp
 from app.infrastructure.security.password_hasher import PasswordHasherImp
@@ -30,6 +33,7 @@ class UseCaseProvider(Provider):
     hotels_repository = provide(HotelRepositoryImp, provides=IHotelRepository)
     users_repository = provide(UsersRepositoryImp, provides=IUserRepository)
     password_hasher = provide(PasswordHasherImp, provides=IPasswordHasher)
+    room_repository = provide(RoomRepositoryImp, provides=IRoomRepository)
     token_processor = provide(JwtTokenProcessorImp)
 
     # Use case
@@ -38,6 +42,10 @@ class UseCaseProvider(Provider):
     create_hotel = provide(CreateHotelUseCase)
     update_hotel = provide(UpdateHotelUseCase)
     delete_hotel = provide(DeleteHotelUseCase)
+
+    get_room = provide(GetRoomUseCase)
+    get_rooms = provide(GetRoomsUseCase)
+    create_room = provide(CreateRoomUseCase)
 
     auth_login = provide(Login)
     auth_register = provide(Register)
