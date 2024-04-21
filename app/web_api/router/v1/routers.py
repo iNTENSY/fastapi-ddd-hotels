@@ -8,9 +8,11 @@ from .users import router as router_users
 
 default_router = APIRouter()
 
+
 @default_router.get("/")
 async def redirect_to_doct():
     return RedirectResponse("/docs", status_code=302)
+
 
 v1_routers = APIRouter(prefix="/api/v1")
 v1_routers.include_router(router_auth)

@@ -27,7 +27,7 @@ from app.domain.users.errors import InvalidTokenError
 from app.infrastructure.authentication.jwt_processor import JwtTokenProcessorImp
 from app.infrastructure.authentication.permissions import auth_required
 from app.web_api.schemas.hotels import UpdateHotelSchema
-from app.web_api.schemas.rooms import CreateRoomSchema
+from app.web_api.schemas.rooms import CreateRoomSchema, UpdateRoomSchema
 
 router = APIRouter(prefix="/hotels", tags=["Hotels"], route_class=DishkaRoute)
 
@@ -89,13 +89,13 @@ async def delete_hotel(
 async def update_hotel(
         id: uuid.UUID,
         request: Request,
-        update_hotel_request: UpdateHotelSchema,
+        update_hotel_schema: UpdateHotelSchema,
         update_hotel_interactor: FromDishka[UpdateHotelUseCase],
         token_processor: FromDishka[JwtTokenProcessorImp]
 ) -> HotelResponse:
     if await token_processor.validate_token(request.scope["auth"]) is None:
         raise InvalidTokenError
-    response = await update_hotel_interactor(UpdateHotelRequest(id=id, content=update_hotel_request))
+    response = await update_hotel_interactor(UpdateHotelRequest(id=id, content=update_hotel_schema))
     if response is None:
         raise HotelNotFoundError
     return response
@@ -125,9 +125,20 @@ async def create_room(
         id: uuid.UUID,
         request: Request,
         token_processor: FromDishka[JwtTokenProcessorImp],
-        create_room_request: CreateRoomSchema,
+        create_room_schema: CreateRoomSchema,
         interactor: FromDishka[CreateRoomUseCase]
 ) -> RoomResponse:
     if await token_processor.validate_token(request.scope["auth"]) is None:
         raise InvalidTokenError
-    return await interactor(CreateRoomRequest(hotel_id=id, content=create_room_request))
+    return await interactor(CreateRoomRequest(hotel_id=id, content=create_room_schema))
+
+
+@router.patch("/{id}/rooms/{room_id}", response_model=RoomResponse, dependencies=[Depends(auth_required)])
+async def update_room(
+        id: uuid.UUID,
+        request: Request,
+        token_processor: FromDishka[JwtTokenProcessorImp],
+        update_room_schema: UpdateRoomSchema,
+        interactor: FromDishka[CreateRoomUseCase]
+):
+    ...

@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 import uvicorn
 
 from dishka.integrations.fastapi import setup_dishka
@@ -24,21 +26,23 @@ def init_routers(app: FastAPI) -> None:
     app.include_router(v1_routers)
 
 
-def startup_event() -> None:
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> None:
     """Start up event."""
     aior = aioredis.from_url(RedisSettings(host="localhost", port=6379).url)
     FastAPICache.init(RedisBackend(aior), prefix="cache")
+    yield
+    await aior.close()
 
 
 def app_factory() -> FastAPI:
     """Entrypoint factory."""
-    app = FastAPI()
+    app = FastAPI(lifespan=lifespan)
 
     init_di(app)
     init_exc_handlers(app)
     init_routers(app)
 
-    app.on_event("startup")(startup_event)
     return app
 
 
