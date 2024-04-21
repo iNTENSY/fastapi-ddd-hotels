@@ -6,6 +6,7 @@ from uuid import uuid4
 from app.domain.common.errors import DomainValidationError
 from app.domain.common.value_object import DomainValueObject
 
+
 @dataclass(frozen=True)
 class BookingId:
     value: uuid.UUID
@@ -45,5 +46,5 @@ class Bookings:
             user_id=user_id,
             date_from=date_from,
             date_to=date_to,
-            price=price
+            price=price,
         )

@@ -1,8 +1,10 @@
 from dishka import AsyncContainer, make_async_container
 
-from app.infrastructure.di.providers.adapters import (SqlalchemyProvider,
-                                                      DateTimeProvider,
-                                                      SettingsProvider)
+from app.infrastructure.di.providers.adapters import (
+    DateTimeProvider,
+    SettingsProvider,
+    SqlalchemyProvider,
+)
 from app.infrastructure.di.providers.usecase import UseCaseProvider
 
 

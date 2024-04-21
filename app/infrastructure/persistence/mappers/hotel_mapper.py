@@ -1,5 +1,12 @@
-from app.domain.hotels.entity import Hotels, HotelId, HotelName, HotelLocation, HotelServices, HotelRoomQuantity, \
-    HotelImageId
+from app.domain.hotels.entity import (
+    HotelId,
+    HotelImageId,
+    HotelLocation,
+    HotelName,
+    HotelRoomQuantity,
+    Hotels,
+    HotelServices,
+)
 
 
 async def hotel_from_dict_to_entity(data: dict) -> Hotels:
@@ -9,5 +16,5 @@ async def hotel_from_dict_to_entity(data: dict) -> Hotels:
         location=HotelLocation(data["location"]),
         services=HotelServices(data["services"]),
         rooms_quantity=HotelRoomQuantity(data["rooms_quantity"]),
-        image_id=HotelImageId(data["image_id"])
+        image_id=HotelImageId(data["image_id"]),
     )

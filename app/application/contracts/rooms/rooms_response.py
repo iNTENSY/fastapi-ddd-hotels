@@ -35,7 +35,4 @@ class RoomsListResponse:
 
     @staticmethod
     async def create(rooms: list[Rooms]) -> "RoomsListResponse":
-        return RoomsListResponse(
-            items=[await RoomResponse.create(room) for room in rooms],
-            count=len(rooms)
-        )
+        return RoomsListResponse(items=[await RoomResponse.create(room) for room in rooms], count=len(rooms))

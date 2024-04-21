@@ -1,5 +1,8 @@
-from app.application.contracts.users.get_user_request import GetUserRequest, GetUserListRequest
-from app.application.contracts.users.user_reponse import UserResponse, UserListResponse
+from app.application.contracts.users.get_user_request import (
+    GetUserListRequest,
+    GetUserRequest,
+)
+from app.application.contracts.users.user_reponse import UserListResponse, UserResponse
 from app.application.protocols.interactor import Interactor
 from app.domain.users.repository import IUserRepository
 

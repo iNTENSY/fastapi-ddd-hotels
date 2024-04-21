@@ -23,7 +23,7 @@ class HotelResponse:
             location=hotel.location.value,
             services=hotel.services.value,
             rooms_quantity=hotel.rooms_quantity.value,
-            image_id=hotel.image_id.value
+            image_id=hotel.image_id.value,
         )
 
 
@@ -34,7 +34,4 @@ class HotelsListResponse:
 
     @staticmethod
     async def create(hotels: list[Hotels]) -> "HotelsListResponse":
-        return HotelsListResponse(
-            items=[await HotelResponse.create(hotel) for hotel in hotels],
-            count=len(hotels)
-        )
+        return HotelsListResponse(items=[await HotelResponse.create(hotel) for hotel in hotels], count=len(hotels))

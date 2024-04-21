@@ -1,14 +1,16 @@
 import uuid
-from typing import Sequence
+from collections.abc import Sequence
 
-from sqlalchemy import select, delete, update
+from sqlalchemy import delete, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.hotels.entity import Hotels
 from app.domain.hotels.repository import IHotelRepository
-from app.infrastructure.persistence.mappers.hotel_mapper import hotel_from_dict_to_entity
+from app.infrastructure.persistence.mappers.hotel_mapper import (
+    hotel_from_dict_to_entity,
+)
 from app.infrastructure.persistence.models import HotelsModel
 
 
@@ -20,7 +22,6 @@ class HotelRepositoryImp(IHotelRepository):
         """Создание в БД."""
         statement = insert(HotelsModel).values(await domain.raw())
         await self.connection.execute(statement)
-
 
     async def find_all(self, limit: int, offset: int) -> list[Hotels]:
         """Выбрать все отели из БД."""

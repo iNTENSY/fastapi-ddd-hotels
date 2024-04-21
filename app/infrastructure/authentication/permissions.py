@@ -11,7 +11,7 @@ from app.domain.users.errors import UserIsNotAuthorizedError
 class OAuth2PasswordBearerWithCookie(OAuth2):
     def __init__(
         self,
-        tokenUrl: str, # noqa
+        tokenUrl: str,  # noqa
         scheme_name: str | None = None,
         scopes: dict[str, str] | None = None,
         auto_error: bool = True,
@@ -40,8 +40,7 @@ class OAuth2PasswordBearerWithCookie(OAuth2):
 oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/api/v1/auth/login")
 
 
-def auth_required(request: Request,
-                  token=Depends(oauth2_scheme)) -> None:
+def auth_required(request: Request, token=Depends(oauth2_scheme)) -> None:
     if token is None:
         raise UserIsNotAuthorizedError
     request.scope["auth"] = token

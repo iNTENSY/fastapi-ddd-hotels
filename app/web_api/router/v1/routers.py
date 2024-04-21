@@ -1,10 +1,9 @@
 from fastapi import APIRouter
 from starlette.responses import RedirectResponse
 
-from .hotels import router as router_hotels
 from .auth import router as router_auth
+from .hotels import router as router_hotels
 from .users import router as router_users
-
 
 default_router = APIRouter()
 

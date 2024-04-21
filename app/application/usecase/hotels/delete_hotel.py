@@ -7,9 +7,7 @@ from app.domain.hotels.repository import IHotelRepository
 
 
 class DeleteHotelUseCase(Interactor[DeleteHotelRequest, HotelResponse]):
-    def __init__(self,
-                 uow: IUnitOfWork,
-                 hotels_repository: IHotelRepository) -> None:
+    def __init__(self, uow: IUnitOfWork, hotels_repository: IHotelRepository) -> None:
         self._uow = uow
         self._hotels_repository = hotels_repository
 

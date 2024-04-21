@@ -1,6 +1,7 @@
 import uuid
 from dataclasses import dataclass, field
 
+
 @dataclass(frozen=True)
 class GetRoomsListRequest:
     id: uuid.UUID

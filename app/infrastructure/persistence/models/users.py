@@ -5,6 +5,7 @@ from app.infrastructure.persistence.models.base import Base, intpk, uuidpk
 
 class UsersModel(Base):
     """Модель пользователей."""
+
     __tablename__ = "users"
 
     id: Mapped[uuidpk]

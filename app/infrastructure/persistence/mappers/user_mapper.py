@@ -1,4 +1,4 @@
-from app.domain.users.entity import Users, UserId, UserEmail, UserHashedPassword
+from app.domain.users.entity import UserEmail, UserHashedPassword, UserId, Users
 
 
 async def user_from_dict_to_entity(data: dict) -> Users:

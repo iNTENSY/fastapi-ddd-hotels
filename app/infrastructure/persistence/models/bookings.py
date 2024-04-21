@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import ForeignKey, Date, Computed
+from sqlalchemy import Computed, Date, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.infrastructure.persistence.models.base import Base, uuidpk

@@ -54,13 +54,9 @@ class Rooms:
     image_id: RoomImageId
 
     @staticmethod
-    async def create(hotel_id: uuid.UUID,
-                     name: str,
-                     description: str,
-                     price: int,
-                     services: list[str],
-                     quantity: int,
-                     image_id: int) -> "Rooms":
+    async def create(
+        hotel_id: uuid.UUID, name: str, description: str, price: int, services: list[str], quantity: int, image_id: int
+    ) -> "Rooms":
         return Rooms(
             id=RoomId(value=uuid.uuid4()),
             hotel_id=RoomHotelId(hotel_id),
@@ -69,7 +65,7 @@ class Rooms:
             price=RoomPrice(price),
             services=RoomServices(services),
             quantity=RoomQuantity(quantity),
-            image_id=RoomImageId(image_id)
+            image_id=RoomImageId(image_id),
         )
 
     async def raw(self) -> dict:

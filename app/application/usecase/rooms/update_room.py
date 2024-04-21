@@ -10,5 +10,4 @@ class UpdateRoomUseCase(Interactor[UpdateRoomRequest, RoomResponse]):
         self._uow = uow
         self.repository = repository
 
-    async def __call__(self, request: UpdateRoomRequest) -> RoomResponse:
-        ...
+    async def __call__(self, request: UpdateRoomRequest) -> RoomResponse: ...

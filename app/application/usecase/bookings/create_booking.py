@@ -1,5 +1,7 @@
 from app.application.contracts.bookings.booking_response import BookingResponse
-from app.application.contracts.bookings.create_booking_request import CreateBookingRequest
+from app.application.contracts.bookings.create_booking_request import (
+    CreateBookingRequest,
+)
 from app.application.protocols.interactor import Interactor
 from app.application.protocols.unitofwork import IUnitOfWork
 from app.domain.bookings.repository import IBookingRepository

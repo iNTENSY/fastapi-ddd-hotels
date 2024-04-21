@@ -10,11 +10,7 @@ class UserResponse:
 
     @staticmethod
     async def create(user: Users) -> "UserResponse":
-        return UserResponse(
-            id=user.id.value,
-            email=user.email.value
-        )
-
+        return UserResponse(id=user.id.value, email=user.email.value)
 
 
 @dataclass(frozen=True)
@@ -24,7 +20,4 @@ class UserListResponse:
 
     @staticmethod
     async def create(users: list[Users]) -> "UserListResponse":
-        return UserListResponse(
-            items=[await UserResponse.create(user) for user in users],
-            count=len(users)
-        )
+        return UserListResponse(items=[await UserResponse.create(user) for user in users], count=len(users))

@@ -7,7 +7,9 @@ from app.application.protocols.unitofwork import IUnitOfWork
 from app.domain.common.errors import UnprocessableEntityError
 from app.domain.rooms.entity import Rooms
 from app.domain.rooms.repository import IRoomRepository
-from app.infrastructure.persistence.mappers.room_mapper import room_from_dataclass_to_dict
+from app.infrastructure.persistence.mappers.room_mapper import (
+    room_from_dataclass_to_dict,
+)
 
 
 class CreateRoomUseCase(Interactor[CreateRoomRequest, RoomResponse]):
@@ -23,12 +25,12 @@ class CreateRoomUseCase(Interactor[CreateRoomRequest, RoomResponse]):
             price=request.content.price,
             services=request.content.services,
             quantity=request.content.quantity,
-            image_id=request.content.image_id
+            image_id=request.content.image_id,
         )
         try:
             await self._repository.create(room)
             await self._uow.commit()
         except IntegrityError as exc:
-            err_msg = str(exc.orig).split(':')[-1].replace('\n', '').strip()
+            err_msg = str(exc.orig).split(":")[-1].replace("\n", "").strip()
             raise UnprocessableEntityError(err_msg)
         return await RoomResponse.create(room)

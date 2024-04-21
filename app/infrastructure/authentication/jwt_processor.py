@@ -1,11 +1,11 @@
 from datetime import timedelta
 from typing import Optional
 
-from jose import jwt, JWTError
+from jose import JWTError, jwt
 
 from app.application.protocols.date_time import DateTimeProcessor
 from app.application.protocols.jwt_processor import JwtTokenProcessor
-from app.domain.users.entity import UserId, UserEmail, Users
+from app.domain.users.entity import UserEmail, UserId, Users
 from app.domain.users.errors import InvalidTokenError
 from app.infrastructure.authentication.jwt_settings import JWTSettings
 
@@ -19,12 +19,7 @@ class JwtTokenProcessorImp(JwtTokenProcessor):
         issued_at = await self.date_time_provider.get_current_time()
         expiration_time = issued_at + timedelta(minutes=self._jwt_options.expires_in)
 
-        payload = {
-            "iat": issued_at,
-            "exp": expiration_time,
-            "sub": str(user_id.value),
-            "email": user_email.value
-        }
+        payload = {"iat": issued_at, "exp": expiration_time, "sub": str(user_id.value), "email": user_email.value}
 
         encoded_jwt = jwt.encode(payload, self._jwt_options.secret, self._jwt_options.algorithm)
         return encoded_jwt

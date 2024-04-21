@@ -10,5 +10,4 @@ class DeleteUserUseCase(Interactor[DeleteUserRequest, UserResponse]):
         self._uow = uow
         self._user_repository = user_repository
 
-    async def __call__(self, request: DeleteUserRequest) -> UserResponse:
-        ...
+    async def __call__(self, request: DeleteUserRequest) -> UserResponse: ...

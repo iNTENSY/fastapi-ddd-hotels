@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import select, delete, update
+from sqlalchemy import delete, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -45,4 +45,3 @@ class RoomRepositoryImp(IRoomRepository):
         if result is None:
             return None
         return await room_from_dict_to_entity(result.__dict__)
-

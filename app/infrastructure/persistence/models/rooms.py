@@ -15,7 +15,7 @@ class RoomsModel(Base):
     hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id", ondelete="CASCADE"))
 
     name: Mapped[str]
-    description: Mapped[Optional[str]]
+    description: Mapped[str | None]
     price: Mapped[int]
     services: Mapped[list[str]] = mapped_column(JSON)
     quantity: Mapped[int]

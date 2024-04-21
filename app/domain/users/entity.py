@@ -24,14 +24,11 @@ class Users:
     hashed_password: UserHashedPassword
 
     @staticmethod
-    async def create(
-            email: str,
-            hashed_password: str
-    ) -> "Users":
+    async def create(email: str, hashed_password: str) -> "Users":
         return Users(
             id=UserId(value=uuid.uuid4()),
             email=UserEmail(value=email),
-            hashed_password=UserHashedPassword(value=hashed_password)
+            hashed_password=UserHashedPassword(value=hashed_password),
         )
 
     async def raw(self) -> dict:

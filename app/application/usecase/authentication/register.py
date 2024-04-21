@@ -1,4 +1,6 @@
-from app.application.contracts.authentication.authentication_response import AuthResponse
+from app.application.contracts.authentication.authentication_response import (
+    AuthResponse,
+)
 from app.application.contracts.authentication.register_request import RegisterRequest
 from app.application.protocols.interactor import Interactor
 from app.application.protocols.password_hasher import IPasswordHasher
@@ -8,10 +10,7 @@ from app.domain.users.repository import IUserRepository
 
 
 class Register(Interactor[RegisterRequest, AuthResponse]):
-    def __init__(self,
-                 uow: IUnitOfWork,
-                 users_repository: IUserRepository,
-                 password_hasher: IPasswordHasher) -> None:
+    def __init__(self, uow: IUnitOfWork, users_repository: IUserRepository, password_hasher: IPasswordHasher) -> None:
         self._uow = uow
         self.users_repository = users_repository
         self.password_hasher = password_hasher

@@ -1,12 +1,17 @@
 from http import HTTPStatus
 
-from fastapi import Request, FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from app.domain.common.errors import DomainValidationError, UnprocessableEntityError
 from app.domain.hotels.errors import HotelNotFoundError
 from app.domain.rooms.errors import RoomNotFoundError
-from app.domain.users.errors import InvalidTokenError, UserNotFoundError, InvalidUserDataError, UserBadPermissionError
+from app.domain.users.errors import (
+    InvalidTokenError,
+    InvalidUserDataError,
+    UserBadPermissionError,
+    UserNotFoundError,
+)
 
 
 async def validation_error_exc_handler(request: Request, exc: DomainValidationError):
@@ -38,7 +43,7 @@ async def room_not_found_exc_handler(request: Request, exc: RoomNotFoundError):
 
 
 async def integrity_error_exc_handler(request: Request, exc: UnprocessableEntityError):
-    return JSONResponse(content = {"detail": exc.message}, status_code=HTTPStatus.UNPROCESSABLE_ENTITY)
+    return JSONResponse(content={"detail": exc.message}, status_code=HTTPStatus.UNPROCESSABLE_ENTITY)
 
 
 def init_exc_handlers(app: FastAPI) -> None:
