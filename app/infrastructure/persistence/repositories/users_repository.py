@@ -1,3 +1,5 @@
+import uuid
+
 from sqlalchemy import select, delete, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -37,7 +39,7 @@ class UsersRepositoryImp(IUserRepository):
             return None
         return await user_from_dict_to_entity(result.__dict__)
 
-    async def update(self, data: dict, id: int) -> Users | None:
+    async def update(self, data: dict, id: uuid.UUID) -> Users | None:
         """Обновить пользователя по уникальному идентификатору"""
         statement = update(UsersModel).where(UsersModel.id == id).values(**data).returning(UsersModel)
         result = (await self.connection.execute(statement)).scalar_one_or_none()

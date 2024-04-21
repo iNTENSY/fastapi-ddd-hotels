@@ -1,3 +1,4 @@
+import uuid
 from typing import Sequence
 
 from sqlalchemy import select, delete, update
@@ -41,7 +42,7 @@ class HotelRepositoryImp(IHotelRepository):
             return None
         return await hotel_from_dict_to_entity(result.__dict__)
 
-    async def update(self, data: dict, id: int) -> Hotels | None:
+    async def update(self, data: dict, id: uuid.UUID) -> Hotels | None:
         """Обновить отель по уникальному идентификатору"""
         statement = update(HotelsModel).where(HotelsModel.id == id).values(**data).returning(HotelsModel)
         result = (await self.connection.execute(statement)).scalar_one_or_none()

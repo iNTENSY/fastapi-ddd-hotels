@@ -1,3 +1,5 @@
+import uuid
+
 from sqlalchemy import select, delete, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,7 +19,7 @@ class RoomRepositoryImp(IRoomRepository):
         statement = insert(RoomsModel).values(await domain.raw()).returning(RoomsModel)
         await self.connection.execute(statement)
 
-    async def find_all(self, hotel_id: int, limit: int, offset: int) -> list[Rooms] | None:
+    async def find_all(self, hotel_id: uuid.UUID, limit: int, offset: int) -> list[Rooms] | None:
         statement = select(RoomsModel).where(RoomsModel.hotel_id == hotel_id).limit(limit).offset(offset)
         result = (await self.connection.execute(statement)).scalars().all()
         return [await room_from_dict_to_entity(room.__dict__) for room in result]
@@ -36,7 +38,7 @@ class RoomRepositoryImp(IRoomRepository):
             return None
         return await room_from_dict_to_entity(result.__dict__)
 
-    async def update(self, data: dict, id: int) -> Rooms | None:
+    async def update(self, data: dict, id: uuid.UUID) -> Rooms | None:
         """Обновить номер по уникальному идентификатору"""
         statement = update(RoomsModel).where(RoomsModel.id == id).values(**data).returning(RoomsModel)
         result = (await self.connection.execute(statement)).scalar_one_or_none()
