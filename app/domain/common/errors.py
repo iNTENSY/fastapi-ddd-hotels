@@ -8,10 +8,6 @@ class DomainValidationError(DomainError):
     pass
 
 
-# status_code = -1
-#     detail: str = "Base HTTPException"
-#
-#     def __init__(self) -> None:
-#         if self.status_code <= -1:
-#             raise NotImplementedError("Override base status code")
-#         super().__init__(detail=self.detail, status_code=self.status_code)
+class UnprocessableEntityError(DomainError):
+    def __init__(self, message: str):
+        super().__init__(message)

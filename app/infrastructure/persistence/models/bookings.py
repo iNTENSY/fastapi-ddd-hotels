@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import ForeignKey, Date, Computed
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.infrastructure.persistence.models.base import Base, intpk, uuidpk
+from app.infrastructure.persistence.models.base import Base, uuidpk
 
 
 class BookingsModel(Base):

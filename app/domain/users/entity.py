@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class UserID:
+class UserId:
     value: uuid.UUID
 
 
@@ -12,11 +12,16 @@ class UserEmail:
     value: str
 
 
+@dataclass(frozen=True)
+class UserHashedPassword:
+    value: str
+
+
 @dataclass
 class Users:
-    id: UserID
+    id: UserId
     email: UserEmail
-    hashed_password: str
+    hashed_password: UserHashedPassword
 
     @staticmethod
     async def create(
@@ -24,7 +29,10 @@ class Users:
             hashed_password: str
     ) -> "Users":
         return Users(
-            id=UserID(value=uuid.uuid4()),
+            id=UserId(value=uuid.uuid4()),
             email=UserEmail(value=email),
-            hashed_password=hashed_password
+            hashed_password=UserHashedPassword(value=hashed_password)
         )
+
+    async def raw(self) -> dict:
+        return {key: value.value for key, value in vars(self).items()}

@@ -11,7 +11,7 @@ from app.application.contracts.authentication.login_request import LoginRequest
 from app.application.contracts.authentication.register_request import RegisterRequest
 from app.application.usecase.authentication.login import Login
 from app.application.usecase.authentication.register import Register
-from app.domain.users.entity import UserID, UserEmail
+from app.domain.users.entity import UserId, UserEmail
 from app.infrastructure.authentication.jwt_processor import JwtTokenProcessorImp
 
 router = APIRouter(prefix="/auth", tags=["Auth"], route_class=DishkaRoute)
@@ -26,7 +26,7 @@ async def login(
         token_processor: FromDishka[JwtTokenProcessorImp]
 ) -> AuthResponse:
     user = await interactor(LoginRequest(email=login_request.username, password=login_request.password))
-    token = await token_processor.generate_token(UserID(user.id), UserEmail(user.email))
+    token = await token_processor.generate_token(UserId(user.id), UserEmail(user.email))
     response.set_cookie(key="access_token", value=f"Bearer {token}", httponly=True)
     return user
 

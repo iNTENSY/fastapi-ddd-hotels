@@ -2,6 +2,7 @@ from typing import Sequence
 
 from sqlalchemy import select, delete, update
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.hotels.entity import Hotels
@@ -14,17 +15,17 @@ class HotelRepositoryImp(IHotelRepository):
     def __init__(self, connection: AsyncSession):
         self.connection = connection
 
-    async def create(self, data: dict) -> Hotels:
+    async def create(self, domain: Hotels) -> None:
         """Создание в БД."""
-        statement = insert(HotelsModel).values(**data).returning(HotelsModel)
-        result = (await self.connection.execute(statement)).scalar_one()
-        return await hotel_from_dict_to_entity(result.__dict__)
+        statement = insert(HotelsModel).values(await domain.raw())
+        await self.connection.execute(statement)
+
 
     async def find_all(self, limit: int, offset: int) -> list[Hotels]:
         """Выбрать все отели из БД."""
         statement = select(HotelsModel).limit(limit).offset(offset)
         result = (await self.connection.execute(statement)).scalars().all()
-        return [await hotel_from_dict_to_entity(hotel.__dict__) for hotel in result]
+        return [await hotel_from_dict_to_entity(vars(hotel)) for hotel in result]
 
     async def filter_by(self, **parameters) -> list[Hotels]:
         """Выбрать отели из БД с определенными параметрами."""

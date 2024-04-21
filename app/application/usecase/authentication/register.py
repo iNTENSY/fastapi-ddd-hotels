@@ -3,6 +3,7 @@ from app.application.contracts.authentication.register_request import RegisterRe
 from app.application.protocols.interactor import Interactor
 from app.application.protocols.password_hasher import IPasswordHasher
 from app.application.protocols.unitofwork import IUnitOfWork
+from app.domain.users.entity import Users
 from app.domain.users.repository import IUserRepository
 
 
@@ -17,6 +18,7 @@ class Register(Interactor[RegisterRequest, AuthResponse]):
 
     async def __call__(self, request: RegisterRequest) -> AuthResponse | None:
         hashed_password = await self.password_hasher.hash_password(request.password)
-        user = await self.users_repository.create({"email": request.email, "hashed_password": hashed_password})
+        user = await Users.create(request.email, hashed_password)
+        await self.users_repository.create(user)
         await self._uow.commit()
         return AuthResponse(id=user.id.value, email=user.email.value)

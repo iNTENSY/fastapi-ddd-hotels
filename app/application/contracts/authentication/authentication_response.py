@@ -1,7 +1,8 @@
+import uuid
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class AuthResponse:
-    id: int
+    id: uuid.UUID
     email: str

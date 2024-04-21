@@ -1,3 +1,4 @@
+import uuid
 from dataclasses import dataclass, field
 
 
@@ -9,4 +10,4 @@ class GetHotelListRequest:
 
 @dataclass(frozen=True)
 class GetHotelRequest:
-    id: int = field(default=0)
+    id: uuid.UUID

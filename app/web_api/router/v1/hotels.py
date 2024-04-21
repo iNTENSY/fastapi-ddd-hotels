@@ -1,3 +1,4 @@
+import uuid
 from typing import Annotated
 
 from dishka import FromDishka
@@ -16,7 +17,7 @@ from app.application.contracts.rooms.get_rooms_request import GetRoomsListReques
 from app.application.contracts.rooms.rooms_response import RoomsListResponse, RoomResponse
 from app.application.usecase.hotels.create_hotel import CreateHotelUseCase
 from app.application.usecase.hotels.delete_hotel import DeleteHotelUseCase
-from app.application.usecase.hotels.get_hotel import GetHotelsUseCase, GetHotelUserCase
+from app.application.usecase.hotels.get_hotel import GetHotelsUseCase, GetHotelUseCase
 from app.application.usecase.hotels.update_hotel import UpdateHotelUseCase
 from app.application.usecase.rooms.create_room import CreateRoomUseCase
 from app.application.usecase.rooms.get_room import GetRoomUseCase, GetRoomsUseCase
@@ -25,13 +26,14 @@ from app.domain.rooms.errors import RoomNotFoundError
 from app.domain.users.errors import InvalidTokenError
 from app.infrastructure.authentication.jwt_processor import JwtTokenProcessorImp
 from app.infrastructure.authentication.permissions import auth_required
+from app.web_api.schemas.hotels import UpdateHotelSchema
 from app.web_api.schemas.rooms import CreateRoomSchema
 
 router = APIRouter(prefix="/hotels", tags=["Hotels"], route_class=DishkaRoute)
 
 
 @router.get(path="/", response_model=HotelsListResponse)
-@cache(expire=60*10)
+@cache(expire=60 * 10)
 @inject
 async def get_hotels(
         get_hotels_request: Annotated[GetHotelListRequest, Depends()],
@@ -41,11 +43,11 @@ async def get_hotels(
 
 
 @router.get(path="/{id}", response_model=HotelResponse)
-@cache(expire=60*5)
+@cache(expire=60 * 5)
 @inject
 async def get_hotel(
         get_hotel_request: Annotated[GetHotelRequest, Depends()],
-        interactor: FromDishka[GetHotelUserCase],
+        interactor: FromDishka[GetHotelUseCase],
 ) -> HotelResponse:
     response = await interactor(get_hotel_request)
     if response is None:
@@ -85,15 +87,15 @@ async def delete_hotel(
 @router.patch(path="/{id}", response_model=HotelResponse, dependencies=[Depends(auth_required)])
 @inject
 async def update_hotel(
-        id: int,
+        id: uuid.UUID,
         request: Request,
-        update_hotel_request: UpdateHotelRequest,
+        update_hotel_request: UpdateHotelSchema,
         update_hotel_interactor: FromDishka[UpdateHotelUseCase],
         token_processor: FromDishka[JwtTokenProcessorImp]
 ) -> HotelResponse:
     if await token_processor.validate_token(request.scope["auth"]) is None:
         raise InvalidTokenError
-    response = await update_hotel_interactor(update_hotel_request, id=id)
+    response = await update_hotel_interactor(UpdateHotelRequest(id=id, content=update_hotel_request))
     if response is None:
         raise HotelNotFoundError
     return response
@@ -118,14 +120,14 @@ async def get_rooms_by_hotel_id_and_room_id(
     return response
 
 
-@router.post("/{id}/rooms/", response_model=RoomResponse)
+@router.post("/{id}/rooms/", response_model=RoomResponse, dependencies=[Depends(auth_required)])
 async def create_room(
-        id: int,
-        #request: Request,
-        #token_processor: FromDishka[JwtTokenProcessorImp],
+        id: uuid.UUID,
+        request: Request,
+        token_processor: FromDishka[JwtTokenProcessorImp],
         create_room_request: CreateRoomSchema,
         interactor: FromDishka[CreateRoomUseCase]
 ) -> RoomResponse:
-    #if await token_processor.validate_token(request.scope["auth"]) is None:
-    #    raise InvalidTokenError
+    if await token_processor.validate_token(request.scope["auth"]) is None:
+        raise InvalidTokenError
     return await interactor(CreateRoomRequest(hotel_id=id, content=create_room_request))

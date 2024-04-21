@@ -6,7 +6,7 @@ from app.application.usecase.authentication.login import Login
 from app.application.usecase.authentication.register import Register
 from app.application.usecase.hotels.create_hotel import CreateHotelUseCase
 from app.application.usecase.hotels.delete_hotel import DeleteHotelUseCase
-from app.application.usecase.hotels.get_hotel import GetHotelsUseCase, GetHotelUserCase
+from app.application.usecase.hotels.get_hotel import GetHotelsUseCase, GetHotelUseCase
 from app.application.usecase.hotels.update_hotel import UpdateHotelUseCase
 from app.application.usecase.rooms.create_room import CreateRoomUseCase
 from app.application.usecase.rooms.get_room import GetRoomUseCase, GetRoomsUseCase
@@ -38,7 +38,7 @@ class UseCaseProvider(Provider):
 
     # Use case
     get_hotels = provide(GetHotelsUseCase)
-    get_hotel = provide(GetHotelUserCase)
+    get_hotel = provide(GetHotelUseCase)
     create_hotel = provide(CreateHotelUseCase)
     update_hotel = provide(UpdateHotelUseCase)
     delete_hotel = provide(DeleteHotelUseCase)

@@ -9,7 +9,7 @@ class RoomId:
 
 @dataclass(frozen=True)
 class RoomHotelId:
-    value: int
+    value: uuid.UUID
 
 
 @dataclass(frozen=True)
@@ -37,6 +37,11 @@ class RoomQuantity:
     value: int
 
 
+@dataclass(frozen=True)
+class RoomImageId:
+    value: int
+
+
 @dataclass
 class Rooms:
     id: RoomId
@@ -46,10 +51,10 @@ class Rooms:
     price: RoomPrice
     services: RoomServices
     quantity: RoomQuantity
-    image_id: int
+    image_id: RoomImageId
 
     @staticmethod
-    async def create(hotel_id: int,
+    async def create(hotel_id: uuid.UUID,
                      name: str,
                      description: str,
                      price: int,
@@ -64,5 +69,8 @@ class Rooms:
             price=RoomPrice(price),
             services=RoomServices(services),
             quantity=RoomQuantity(quantity),
-            image_id=image_id
+            image_id=RoomImageId(image_id)
         )
+
+    async def raw(self) -> dict:
+        return {key: value.value for key, value in vars(self).items()}

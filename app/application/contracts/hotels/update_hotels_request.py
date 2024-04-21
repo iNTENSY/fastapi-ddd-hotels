@@ -1,12 +1,10 @@
-from pydantic import BaseModel
+import uuid
+from dataclasses import dataclass
+
+from app.web_api.schemas.hotels import UpdateHotelSchema
 
 
-class UpdateHotelRequest(BaseModel):
-    name: str | None = None
-    location: str | None = None
-    services: list[str] | None = []
-    rooms_quantity: int | None = None
-    image_id: int | None = None
-
-    class Config:
-        from_attributes = True
+@dataclass(frozen=True)
+class UpdateHotelRequest:
+    id: uuid.UUID
+    content: UpdateHotelSchema

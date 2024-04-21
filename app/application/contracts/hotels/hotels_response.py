@@ -1,18 +1,19 @@
+import uuid
+from dataclasses import dataclass
+
 from pydantic import BaseModel
 
 from app.domain.hotels.entity import Hotels
 
 
-class HotelResponse(BaseModel):
-    id: int
+@dataclass(frozen=True)
+class HotelResponse:
+    id: uuid.UUID
     name: str
     location: str
     services: list[str]
     rooms_quantity: int
     image_id: int
-
-    class Config:
-        from_attributes = True
 
     @staticmethod
     async def create(hotel: Hotels) -> "HotelResponse":
@@ -22,13 +23,18 @@ class HotelResponse(BaseModel):
             location=hotel.location.value,
             services=hotel.services.value,
             rooms_quantity=hotel.rooms_quantity.value,
-            image_id=hotel.image_id
+            image_id=hotel.image_id.value
         )
 
 
-class HotelsListResponse(BaseModel):
+@dataclass(frozen=True)
+class HotelsListResponse:
     items: list[HotelResponse]
     count: int
 
-    class Config:
-        from_attributes = True
+    @staticmethod
+    async def create(hotels: list[Hotels]) -> "HotelsListResponse":
+        return HotelsListResponse(
+            items=[await HotelResponse.create(hotel) for hotel in hotels],
+            count=len(hotels)
+        )

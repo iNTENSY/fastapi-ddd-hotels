@@ -55,6 +55,11 @@ class HotelRoomQuantity(DomainValidationError):
             raise DomainValidationError("Rooms amount must be greater then 0")
 
 
+@dataclass(frozen=True)
+class HotelImageId:
+    value: int
+
+
 @dataclass
 class Hotels:
     id: HotelId
@@ -62,7 +67,7 @@ class Hotels:
     location: HotelLocation
     services: HotelServices
     rooms_quantity: HotelRoomQuantity
-    image_id: int
+    image_id: HotelImageId
 
     @staticmethod
     async def create(
@@ -78,5 +83,8 @@ class Hotels:
             location=HotelLocation(value=location),
             services=HotelServices(value=services),
             rooms_quantity=HotelRoomQuantity(value=rooms_quantity),
-            image_id=image_id
+            image_id=HotelImageId(value=image_id)
         )
+
+    async def raw(self) -> dict:
+        return {key: value.value for key, value in vars(self).items()}

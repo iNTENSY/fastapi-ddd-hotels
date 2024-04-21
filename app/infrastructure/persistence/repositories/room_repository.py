@@ -12,11 +12,10 @@ class RoomRepositoryImp(IRoomRepository):
     def __init__(self, connection: AsyncSession):
         self.connection = connection
 
-    async def create(self, data: dict) -> Rooms:
+    async def create(self, domain: Rooms) -> None:
         """Create room in the hotel using hotel_id."""
-        statement = insert(RoomsModel).values(**data).returning(RoomsModel)
-        result = (await self.connection.execute(statement)).scalar_one()
-        return await room_from_dict_to_entity(vars(result))
+        statement = insert(RoomsModel).values(await domain.raw()).returning(RoomsModel)
+        await self.connection.execute(statement)
 
     async def find_all(self, hotel_id: int, limit: int, offset: int) -> list[Rooms] | None:
         statement = select(RoomsModel).where(RoomsModel.hotel_id == hotel_id).limit(limit).offset(offset)

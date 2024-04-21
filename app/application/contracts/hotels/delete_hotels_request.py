@@ -1,5 +1,7 @@
-from pydantic import BaseModel, Field
+import uuid
+from dataclasses import dataclass
 
 
-class DeleteHotelRequest(BaseModel):
-    hotel_id: int = Field(ge=0)
+@dataclass(frozen=True)
+class DeleteHotelRequest:
+    id: uuid.UUID

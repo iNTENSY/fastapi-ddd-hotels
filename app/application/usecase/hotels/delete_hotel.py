@@ -14,7 +14,7 @@ class DeleteHotelUseCase(Interactor[DeleteHotelRequest, HotelResponse]):
         self._hotels_repository = hotels_repository
 
     async def __call__(self, request: DeleteHotelRequest, **kwargs) -> HotelResponse | None:
-        hotel: Hotels = await self._hotels_repository.delete(**request.model_dump())
+        hotel: Hotels = await self._hotels_repository.delete(id=request.id)
         if not hotel:
             return None
         await self._uow.commit()

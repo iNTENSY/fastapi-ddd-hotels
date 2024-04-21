@@ -16,6 +16,6 @@ class Login(Interactor[LoginRequest, AuthResponse]):
         if not user:
             raise UserNotFoundError
         if not await self.password_hasher.verify_password(request.password,
-                                                          user[0].hashed_password):
+                                                          user[0].hashed_password.value):
             raise InvalidUserDataError
         return AuthResponse(id=user[0].id.value, email=user[0].email.value)

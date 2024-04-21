@@ -5,7 +5,7 @@ from jose import jwt, JWTError
 
 from app.application.protocols.date_time import DateTimeProcessor
 from app.application.protocols.jwt_processor import JwtTokenProcessor
-from app.domain.users.entity import UserID, UserEmail, Users
+from app.domain.users.entity import UserId, UserEmail, Users
 from app.domain.users.errors import InvalidTokenError
 from app.infrastructure.authentication.jwt_settings import JWTSettings
 
@@ -15,7 +15,7 @@ class JwtTokenProcessorImp(JwtTokenProcessor):
         self._jwt_options = jwt_options
         self.date_time_provider = date_time_provider
 
-    async def generate_token(self, user_id: UserID, user_email: UserEmail) -> str:
+    async def generate_token(self, user_id: UserId, user_email: UserEmail) -> str:
         issued_at = await self.date_time_provider.get_current_time()
         expiration_time = issued_at + timedelta(minutes=self._jwt_options.expires_in)
 
@@ -29,10 +29,10 @@ class JwtTokenProcessorImp(JwtTokenProcessor):
         encoded_jwt = jwt.encode(payload, self._jwt_options.secret, self._jwt_options.algorithm)
         return encoded_jwt
 
-    async def validate_token(self, token: str) -> tuple[UserID, UserEmail] | None:
+    async def validate_token(self, token: str) -> tuple[UserId, UserEmail] | None:
         try:
             payload = jwt.decode(token, self._jwt_options.secret, self._jwt_options.algorithm)
-            return UserID(payload["sub"]), UserEmail(payload["email"])
+            return UserId(payload["sub"]), UserEmail(payload["email"])
         except (JWTError, ValueError, KeyError):
             return None
 
