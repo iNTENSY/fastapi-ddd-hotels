@@ -19,6 +19,7 @@ from app.application.contracts.hotels.hotels_response import (
 )
 from app.application.contracts.hotels.update_hotels_request import UpdateHotelRequest
 from app.application.contracts.rooms.create_room_request import CreateRoomRequest
+from app.application.contracts.rooms.delete_room_request import DeleteRoomRequest
 from app.application.contracts.rooms.get_rooms_request import (
     GetRoomRequest,
     GetRoomsListRequest,
@@ -33,6 +34,7 @@ from app.application.usecase.hotels.delete_hotel import DeleteHotelUseCase
 from app.application.usecase.hotels.get_hotel import GetHotelsUseCase, GetHotelUseCase
 from app.application.usecase.hotels.update_hotel import UpdateHotelUseCase
 from app.application.usecase.rooms.create_room import CreateRoomUseCase
+from app.application.usecase.rooms.delete_room import DeleteRoomUseCase
 from app.application.usecase.rooms.get_room import GetRoomsUseCase, GetRoomUseCase
 from app.application.usecase.rooms.update_room import UpdateRoomUseCase
 from app.domain.hotels.errors import HotelNotFoundError
@@ -146,7 +148,8 @@ async def create_room(
 
 @router.patch("/{id}/rooms/{room_id}", response_model=RoomResponse, dependencies=[Depends(auth_required)])
 async def update_room(
-    id: uuid.UUID, room_id: uuid.UUID,
+    id: uuid.UUID,
+    room_id: uuid.UUID,
     request: Request,
     token_processor: FromDishka[JwtTokenProcessorImp],
     update_room_schema: UpdateRoomSchema,
@@ -155,6 +158,21 @@ async def update_room(
     if await token_processor.validate_token(request.scope["auth"]) is None:
         raise InvalidTokenError
     response = await interactor(UpdateRoomRequest(id=id, content=update_room_schema, room_id=room_id))
+    if response is None:
+        raise RoomNotFoundError
+    return response
+
+
+@router.delete("/{id}/rooms/{room_id}", response_model=RoomResponse, dependencies=[Depends(auth_required)])
+async def delete_room(
+    delete_room_request: Annotated[DeleteRoomRequest, Depends()],
+    request: Request,
+    token_processor: FromDishka[JwtTokenProcessorImp],
+    interactor: FromDishka[DeleteRoomUseCase],
+) -> RoomResponse:
+    if await token_processor.validate_token(request.scope["auth"]) is None:
+        raise InvalidTokenError
+    response = await interactor(delete_room_request)
     if response is None:
         raise RoomNotFoundError
     return response

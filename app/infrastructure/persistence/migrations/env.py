@@ -1,4 +1,3 @@
-from app.infrastructure.persistence.models.base import Base
 import os
 import sys
 from logging.config import fileConfig
@@ -7,6 +6,8 @@ from os.path import dirname
 from alembic import context
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
+
+from app.infrastructure.persistence.models.base import Base
 
 sys.path.insert(0, dirname(dirname(dirname(dirname(__file__)))))
 

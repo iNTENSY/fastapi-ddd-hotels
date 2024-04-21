@@ -11,5 +11,5 @@ class GetRoomsListRequest:
 
 @dataclass(frozen=True)
 class GetRoomRequest:
-    id: int = field(default=0)
-    room_id: int = field(default=0)
+    id: uuid.UUID
+    room_id: uuid.UUID

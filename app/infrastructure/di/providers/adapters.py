@@ -1,6 +1,6 @@
 import os
-from pathlib import Path
 from collections.abc import AsyncIterable
+from pathlib import Path
 
 from dishka import Provider, Scope, provide
 from dotenv import load_dotenv

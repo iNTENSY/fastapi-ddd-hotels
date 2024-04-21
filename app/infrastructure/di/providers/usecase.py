@@ -9,6 +9,7 @@ from app.application.usecase.hotels.delete_hotel import DeleteHotelUseCase
 from app.application.usecase.hotels.get_hotel import GetHotelsUseCase, GetHotelUseCase
 from app.application.usecase.hotels.update_hotel import UpdateHotelUseCase
 from app.application.usecase.rooms.create_room import CreateRoomUseCase
+from app.application.usecase.rooms.delete_room import DeleteRoomUseCase
 from app.application.usecase.rooms.get_room import GetRoomsUseCase, GetRoomUseCase
 from app.application.usecase.rooms.update_room import UpdateRoomUseCase
 from app.application.usecase.users.delete_user import DeleteUserUseCase
@@ -43,21 +44,25 @@ class UseCaseProvider(Provider):
     room_repository = provide(RoomRepositoryImp, provides=IRoomRepository)
     token_processor = provide(JwtTokenProcessorImp)
 
-    # Use case
+    # Hotel use cases
     get_hotels = provide(GetHotelsUseCase)
     get_hotel = provide(GetHotelUseCase)
     create_hotel = provide(CreateHotelUseCase)
     update_hotel = provide(UpdateHotelUseCase)
     delete_hotel = provide(DeleteHotelUseCase)
 
+    # Room use cases
     get_room = provide(GetRoomUseCase)
     get_rooms = provide(GetRoomsUseCase)
     create_room = provide(CreateRoomUseCase)
     update_room = provide(UpdateRoomUseCase)
+    delete_room = provide(DeleteRoomUseCase)
 
+    # Auth use cases
     auth_login = provide(Login)
     auth_register = provide(Register)
 
+    # User use cases
     get_users = provide(GetUsersUseCase)
     get_user = provide(GetUserUseCase)
     delete_user = provide(DeleteUserUseCase)
