@@ -7,4 +7,5 @@ from app.web_api.schemas.rooms import UpdateRoomSchema
 @dataclass(frozen=True)
 class UpdateRoomRequest:
     id: uuid.UUID
+    room_id: uuid.UUID
     content: UpdateRoomSchema

@@ -10,6 +10,7 @@ from app.application.usecase.hotels.get_hotel import GetHotelsUseCase, GetHotelU
 from app.application.usecase.hotels.update_hotel import UpdateHotelUseCase
 from app.application.usecase.rooms.create_room import CreateRoomUseCase
 from app.application.usecase.rooms.get_room import GetRoomsUseCase, GetRoomUseCase
+from app.application.usecase.rooms.update_room import UpdateRoomUseCase
 from app.application.usecase.users.delete_user import DeleteUserUseCase
 from app.application.usecase.users.get_user import GetUsersUseCase, GetUserUseCase
 from app.domain.hotels.repository import IHotelRepository
@@ -52,6 +53,7 @@ class UseCaseProvider(Provider):
     get_room = provide(GetRoomUseCase)
     get_rooms = provide(GetRoomsUseCase)
     create_room = provide(CreateRoomUseCase)
+    update_room = provide(UpdateRoomUseCase)
 
     auth_login = provide(Login)
     auth_register = provide(Register)

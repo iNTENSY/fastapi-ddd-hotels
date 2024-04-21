@@ -27,12 +27,14 @@ from app.application.contracts.rooms.rooms_response import (
     RoomResponse,
     RoomsListResponse,
 )
+from app.application.contracts.rooms.update_hotel_request import UpdateRoomRequest
 from app.application.usecase.hotels.create_hotel import CreateHotelUseCase
 from app.application.usecase.hotels.delete_hotel import DeleteHotelUseCase
 from app.application.usecase.hotels.get_hotel import GetHotelsUseCase, GetHotelUseCase
 from app.application.usecase.hotels.update_hotel import UpdateHotelUseCase
 from app.application.usecase.rooms.create_room import CreateRoomUseCase
 from app.application.usecase.rooms.get_room import GetRoomsUseCase, GetRoomUseCase
+from app.application.usecase.rooms.update_room import UpdateRoomUseCase
 from app.domain.hotels.errors import HotelNotFoundError
 from app.domain.rooms.errors import RoomNotFoundError
 from app.domain.users.errors import InvalidTokenError
@@ -144,9 +146,15 @@ async def create_room(
 
 @router.patch("/{id}/rooms/{room_id}", response_model=RoomResponse, dependencies=[Depends(auth_required)])
 async def update_room(
-    id: uuid.UUID,
+    id: uuid.UUID, room_id: uuid.UUID,
     request: Request,
     token_processor: FromDishka[JwtTokenProcessorImp],
     update_room_schema: UpdateRoomSchema,
-    interactor: FromDishka[CreateRoomUseCase],
-): ...
+    interactor: FromDishka[UpdateRoomUseCase],
+) -> RoomResponse:
+    if await token_processor.validate_token(request.scope["auth"]) is None:
+        raise InvalidTokenError
+    response = await interactor(UpdateRoomRequest(id=id, content=update_room_schema, room_id=room_id))
+    if response is None:
+        raise RoomNotFoundError
+    return response

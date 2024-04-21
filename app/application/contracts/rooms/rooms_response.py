@@ -1,3 +1,4 @@
+import uuid
 from dataclasses import dataclass
 
 from app.domain.rooms.entity import Rooms
@@ -5,8 +6,8 @@ from app.domain.rooms.entity import Rooms
 
 @dataclass(frozen=True)
 class RoomResponse:
-    id: int
-    hotel_id: int
+    id: uuid.UUID
+    hotel_id: uuid.UUID
     name: str
     description: str
     price: int
@@ -17,14 +18,14 @@ class RoomResponse:
     @staticmethod
     async def create(room: Rooms) -> "RoomResponse":
         return RoomResponse(
-            id=room.id,
-            hotel_id=room.hotel_id,
-            name=room.name,
-            description=room.description,
-            price=room.price,
-            services=room.services,
-            quantity=room.quantity,
-            image_id=room.image_id,
+            id=room.id.value,
+            hotel_id=room.hotel_id.value,
+            name=room.name.value,
+            description=room.description.value,
+            price=room.price.value,
+            services=room.services.value,
+            quantity=room.quantity.value,
+            image_id=room.image_id.value,
         )
 
 

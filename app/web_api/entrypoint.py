@@ -26,7 +26,7 @@ def init_routers(app: FastAPI) -> None:
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> None:
+async def lifespan(app: FastAPI):
     """Start up event."""
     aior = aioredis.from_url(RedisSettings(host="localhost", port=6379).url)
     FastAPICache.init(RedisBackend(aior), prefix="cache")
