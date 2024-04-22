@@ -18,16 +18,19 @@ class BookingRepository(IBookingRepository):
         return [await booking_dict_to_entity(booking.__dict__) for booking in result]
 
     async def is_exist(self, domain: Bookings) -> bool:
-        statement = (
-            select(BookingsModel)
-            .where(
-                and_(
-                    BookingsModel.room_id == domain.room_id.value,
-                    or_(
-                        and_(BookingsModel.date_from >= domain.date_from.value, BookingsModel.date_from <= domain.date_to.value),
-                        and_(BookingsModel.date_from <= domain.date_from.value, BookingsModel.date_to > domain.date_from.value)
-                    )
-                )
+        statement = select(BookingsModel).where(
+            and_(
+                BookingsModel.room_id == domain.room_id.value,
+                or_(
+                    and_(
+                        BookingsModel.date_from >= domain.date_from.value,
+                        BookingsModel.date_from <= domain.date_to.value,
+                    ),
+                    and_(
+                        BookingsModel.date_from <= domain.date_from.value,
+                        BookingsModel.date_to > domain.date_from.value,
+                    ),
+                ),
             )
         )
         result = (await self.__connection.execute(statement)).scalar_one_or_none()

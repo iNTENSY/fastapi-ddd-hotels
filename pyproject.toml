@@ -6,6 +6,9 @@ authors = ["Dmitriy <ka1deo@mail.ru>"]
 readme = "README.md"
 package-mode = false
 
+[tool.black]
+line-length = 120
+
 [tool.poetry.dependencies]
 python = "^3.11"
 fastapi = "0.105.0"
@@ -21,7 +24,8 @@ python-jose = "^3.3.0"
 bcrypt = "^4.1.2"
 python-multipart = "^0.0.9"
 fastapi-cache2 = {extras = ["redis"], version = "^0.2.1"}
-pre-commit = "^3.7.0"
+black = "^24.4.0"
+mypy = "^1.9.0"
 
 
 [build-system]
