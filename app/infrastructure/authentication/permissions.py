@@ -44,6 +44,3 @@ async def auth_required(request: Request, token=Depends(oauth2_scheme)) -> None:
     if token is None:
         raise UserIsNotAuthorizedError
     request.scope["auth"] = token
-
-# async def staff_required(request: Request, token=Depends(oauth2_scheme)) -> None:
-#     ...

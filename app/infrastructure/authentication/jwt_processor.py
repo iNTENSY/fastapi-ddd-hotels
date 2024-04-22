@@ -1,11 +1,10 @@
 from datetime import timedelta
-from typing import Optional
 
 from jose import JWTError, jwt
 
 from app.application.protocols.date_time import DateTimeProcessor
 from app.application.protocols.jwt_processor import JwtTokenProcessor
-from app.domain.users.entity import UserEmail, UserId, Users
+from app.domain.users.entity import UserEmail, UserId
 from app.domain.users.errors import InvalidTokenError
 from app.infrastructure.authentication.jwt_settings import JWTSettings
 

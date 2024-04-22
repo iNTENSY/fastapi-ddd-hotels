@@ -4,9 +4,6 @@ from pathlib import Path
 
 from dishka import Provider, Scope, provide
 from dotenv import load_dotenv
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
-from redis import asyncio as aioredis
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,

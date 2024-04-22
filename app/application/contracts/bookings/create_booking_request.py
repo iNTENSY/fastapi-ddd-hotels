@@ -1,9 +1,10 @@
-import datetime
+import uuid
 from dataclasses import dataclass
+
+from app.web_api.schemas.bookings import CreateBookingSchema
 
 
 @dataclass(frozen=True)
 class CreateBookingRequest:
-    room_id: int
-    date_from: datetime.datetime
-    date_to: datetime.datetime
+    user_id: uuid.UUID
+    content: CreateBookingSchema

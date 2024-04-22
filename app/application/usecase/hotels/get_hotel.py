@@ -13,19 +13,19 @@ from app.domain.hotels.repository import IHotelRepository
 
 class GetHotelsUseCase(Interactor[GetHotelListRequest, HotelsListResponse]):
     def __init__(self, hotels_repository: IHotelRepository) -> None:
-        self._hotels_repository = hotels_repository
+        self.hotels_repository = hotels_repository
 
     async def __call__(self, request: GetHotelListRequest) -> HotelsListResponse:
-        hotels: list[Hotels] = await self._hotels_repository.find_all(limit=request.limit, offset=request.offset)
+        hotels: list[Hotels] = await self.hotels_repository.find_all(limit=request.limit, offset=request.offset)
         return await HotelsListResponse.create(hotels)
 
 
 class GetHotelUseCase(Interactor[GetHotelRequest, HotelResponse]):
     def __init__(self, hotels_repository: IHotelRepository) -> None:
-        self._hotel_repository = hotels_repository
+        self.hotel_repository = hotels_repository
 
     async def __call__(self, request: GetHotelRequest) -> HotelResponse | None:
-        hotel = await self._hotel_repository.filter_by(id=request.id)
+        hotel = await self.hotel_repository.filter_by(id=request.id)
         if not hotel:
             return None
         return await HotelResponse.create(hotel[0])

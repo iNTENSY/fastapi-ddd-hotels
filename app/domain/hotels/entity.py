@@ -6,7 +6,7 @@ from app.domain.common.value_object import DomainValueObject
 
 
 @dataclass(frozen=True)
-class HotelId:
+class HotelId(DomainValueObject):
     value: uuid.UUID
 
 
@@ -56,7 +56,7 @@ class HotelRoomQuantity(DomainValidationError):
 
 
 @dataclass(frozen=True)
-class HotelImageId:
+class HotelImageId(DomainValueObject):
     value: int
 
 

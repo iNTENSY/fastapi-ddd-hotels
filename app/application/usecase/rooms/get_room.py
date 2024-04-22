@@ -11,11 +11,11 @@ from app.domain.rooms.repository import IRoomRepository
 
 
 class GetRoomUseCase(Interactor[GetRoomRequest, RoomResponse]):
-    def __init__(self, repository: IRoomRepository):
-        self._repository = repository
+    def __init__(self, room_repository: IRoomRepository):
+        self.room_repository = room_repository
 
     async def __call__(self, request: GetRoomRequest) -> RoomResponse | None:
-        room = await self._repository.filter_by(hotel_id=request.id, id=request.room_id)
+        room = await self.room_repository.filter_by(hotel_id=request.id, id=request.room_id)
         if not room:
             return None
         return await RoomResponse.create(room[0])

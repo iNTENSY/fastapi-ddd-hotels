@@ -3,6 +3,7 @@ from http import HTTPStatus
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
+from app.domain.bookings.errors import BookingAlreadyExistError
 from app.domain.common.errors import DomainValidationError, UnprocessableEntityError
 from app.domain.hotels.errors import HotelNotFoundError
 from app.domain.rooms.errors import RoomNotFoundError
@@ -46,6 +47,10 @@ async def integrity_error_exc_handler(request: Request, exc: UnprocessableEntity
     return JSONResponse(content={"detail": exc.message}, status_code=HTTPStatus.UNPROCESSABLE_ENTITY)
 
 
+async def booking_already_exist_exc_handler(request: Request, exc: BookingAlreadyExistError):
+    return JSONResponse(content={"detail": exc.message}, status_code=HTTPStatus.BAD_REQUEST)
+
+
 def init_exc_handlers(app: FastAPI) -> None:
     """Exception handlers."""
     app.add_exception_handler(DomainValidationError, validation_error_exc_handler)
@@ -55,4 +60,5 @@ def init_exc_handlers(app: FastAPI) -> None:
     app.add_exception_handler(UserBadPermissionError, user_bad_permission_exv_handler)
     app.add_exception_handler(InvalidTokenError, jwt_invalid_exc_handler)
     app.add_exception_handler(UnprocessableEntityError, integrity_error_exc_handler)
+    app.add_exception_handler(BookingAlreadyExistError, booking_already_exist_exc_handler)
     app.add_exception_handler(RoomNotFoundError, room_not_found_exc_handler)

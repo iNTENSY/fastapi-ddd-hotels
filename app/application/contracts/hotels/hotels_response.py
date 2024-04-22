@@ -1,8 +1,6 @@
 import uuid
 from dataclasses import dataclass
 
-from pydantic import BaseModel
-
 from app.domain.hotels.entity import Hotels
 
 

@@ -1,19 +1,21 @@
 import uuid
 from dataclasses import dataclass
 
+from app.domain.common.value_object import DomainValueObject
+
 
 @dataclass(frozen=True)
-class UserId:
+class UserId(DomainValueObject):
     value: uuid.UUID
 
 
 @dataclass(frozen=True)
-class UserEmail:
+class UserEmail(DomainValueObject):
     value: str
 
 
 @dataclass(frozen=True)
-class UserHashedPassword:
+class UserHashedPassword(DomainValueObject):
     value: str
 
 

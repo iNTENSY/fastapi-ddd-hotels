@@ -7,7 +7,7 @@ from app.domain.users.repository import IUserRepository
 
 class DeleteUserUseCase(Interactor[DeleteUserRequest, UserResponse]):
     def __init__(self, uow: IUnitOfWork, user_repository: IUserRepository):
-        self._uow = uow
+        self.__uow = uow
         self._user_repository = user_repository
 
     async def __call__(self, request: DeleteUserRequest) -> UserResponse: ...

@@ -15,7 +15,6 @@ from app.application.protocols.jwt_processor import JwtTokenProcessor
 from app.application.usecase.authentication.login import Login
 from app.application.usecase.authentication.register import Register
 from app.domain.users.entity import UserEmail, UserId
-from app.infrastructure.authentication.jwt_processor import JwtTokenProcessorImp
 
 router = APIRouter(prefix="/auth", tags=["Auth"], route_class=DishkaRoute)
 

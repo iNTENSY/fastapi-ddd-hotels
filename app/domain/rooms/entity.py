@@ -1,44 +1,46 @@
 import uuid
 from dataclasses import dataclass
 
+from app.domain.common.value_object import DomainValueObject
+
 
 @dataclass(frozen=True)
-class RoomId:
+class RoomId(DomainValueObject):
     value: uuid.UUID
 
 
 @dataclass(frozen=True)
-class RoomHotelId:
+class RoomHotelId(DomainValueObject):
     value: uuid.UUID
 
 
 @dataclass(frozen=True)
-class RoomName:
+class RoomName(DomainValueObject):
     value: str
 
 
 @dataclass(frozen=True)
-class RoomDescription:
+class RoomDescription(DomainValueObject):
     value: str
 
 
 @dataclass(frozen=True)
-class RoomPrice:
+class RoomPrice(DomainValueObject):
     value: int
 
 
 @dataclass(frozen=True)
-class RoomServices:
+class RoomServices(DomainValueObject):
     value: list[str]
 
 
 @dataclass(frozen=True)
-class RoomQuantity:
+class RoomQuantity(DomainValueObject):
     value: int
 
 
 @dataclass(frozen=True)
-class RoomImageId:
+class RoomImageId(DomainValueObject):
     value: int
 
 

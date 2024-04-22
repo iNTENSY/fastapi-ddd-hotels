@@ -10,8 +10,5 @@ class PasswordHasherImp(IPasswordHasher):
 
     @staticmethod
     async def verify_password(password: str, hashed_password: str) -> bool:
-        try:
-            result = bcrypt.checkpw(password.encode(), hashed_password.encode())
-        except Exception as exc:
-            return False
+        result = bcrypt.checkpw(password.encode(), hashed_password.encode())
         return result
