@@ -12,7 +12,7 @@ from app.infrastructure.authentication.jwt_processor import JwtTokenProcessorImp
 router = APIRouter(prefix="/bookings")
 
 
-@router.post("")
+@router.post("/")
 @inject
 async def get_bookings(
     request: Request,

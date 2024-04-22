@@ -1,5 +1,6 @@
 from dishka import Provider, Scope, provide
 
+from app.application.protocols.jwt_processor import JwtTokenProcessor
 from app.application.protocols.password_hasher import IPasswordHasher
 from app.application.protocols.unitofwork import IUnitOfWork
 from app.application.usecase.authentication.login import Login
@@ -42,7 +43,7 @@ class UseCaseProvider(Provider):
     users_repository = provide(UsersRepositoryImp, provides=IUserRepository)
     password_hasher = provide(PasswordHasherImp, provides=IPasswordHasher)
     room_repository = provide(RoomRepositoryImp, provides=IRoomRepository)
-    token_processor = provide(JwtTokenProcessorImp)
+    token_processor = provide(JwtTokenProcessorImp, provides=JwtTokenProcessor)
 
     # Hotel use cases
     get_hotels = provide(GetHotelsUseCase)

@@ -40,7 +40,10 @@ class OAuth2PasswordBearerWithCookie(OAuth2):
 oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/api/v1/auth/login")
 
 
-def auth_required(request: Request, token=Depends(oauth2_scheme)) -> None:
+async def auth_required(request: Request, token=Depends(oauth2_scheme)) -> None:
     if token is None:
         raise UserIsNotAuthorizedError
     request.scope["auth"] = token
+
+# async def staff_required(request: Request, token=Depends(oauth2_scheme)) -> None:
+#     ...

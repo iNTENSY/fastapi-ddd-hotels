@@ -29,6 +29,7 @@ from app.application.contracts.rooms.rooms_response import (
     RoomsListResponse,
 )
 from app.application.contracts.rooms.update_hotel_request import UpdateRoomRequest
+from app.application.protocols.jwt_processor import JwtTokenProcessor
 from app.application.usecase.hotels.create_hotel import CreateHotelUseCase
 from app.application.usecase.hotels.delete_hotel import DeleteHotelUseCase
 from app.application.usecase.hotels.get_hotel import GetHotelsUseCase, GetHotelUseCase
@@ -48,12 +49,17 @@ from app.web_api.schemas.rooms import CreateRoomSchema, UpdateRoomSchema
 router = APIRouter(prefix="/hotels", tags=["Hotels"], route_class=DishkaRoute)
 
 
-@router.get(path="/", response_model=HotelsListResponse)
+@router.get(path="/", response_model=HotelsListResponse, dependencies=[Depends(auth_required)])
 @cache(expire=60 * 10)
 @inject
 async def get_hotels(
-    get_hotels_request: Annotated[GetHotelListRequest, Depends()], interactor: FromDishka[GetHotelsUseCase]
+        request: Request,
+        get_hotels_request: Annotated[GetHotelListRequest, Depends()],
+        interactor: FromDishka[GetHotelsUseCase],
+        token_processor: FromDishka[JwtTokenProcessor]
 ) -> HotelsListResponse:
+    if await token_processor.validate_token(request.scope["auth"]) is None:
+        raise InvalidTokenError
     return await interactor(get_hotels_request)
 
 
@@ -61,8 +67,8 @@ async def get_hotels(
 @cache(expire=60 * 5)
 @inject
 async def get_hotel(
-    get_hotel_request: Annotated[GetHotelRequest, Depends()],
-    interactor: FromDishka[GetHotelUseCase],
+        get_hotel_request: Annotated[GetHotelRequest, Depends()],
+        interactor: FromDishka[GetHotelUseCase],
 ) -> HotelResponse:
     response = await interactor(get_hotel_request)
     if response is None:
@@ -73,10 +79,10 @@ async def get_hotel(
 @router.post(path="/", response_model=HotelResponse, dependencies=[Depends(auth_required)])
 @inject
 async def create_hotel(
-    request: Request,
-    create_hotel_request: CreateHotelRequest,
-    interactor: FromDishka[CreateHotelUseCase],
-    token_processor: FromDishka[JwtTokenProcessorImp],
+        request: Request,
+        create_hotel_request: CreateHotelRequest,
+        interactor: FromDishka[CreateHotelUseCase],
+        token_processor: FromDishka[JwtTokenProcessor],
 ) -> HotelResponse:
     if await token_processor.validate_token(request.scope["auth"]) is None:
         raise InvalidTokenError
@@ -86,10 +92,10 @@ async def create_hotel(
 @router.delete(path="/{id}", response_model=HotelResponse, dependencies=[Depends(auth_required)])
 @inject
 async def delete_hotel(
-    request: Request,
-    delete_hotel_request: Annotated[DeleteHotelRequest, Depends()],
-    interactor: FromDishka[DeleteHotelUseCase],
-    token_processor: FromDishka[JwtTokenProcessorImp],
+        request: Request,
+        delete_hotel_request: Annotated[DeleteHotelRequest, Depends()],
+        interactor: FromDishka[DeleteHotelUseCase],
+        token_processor: FromDishka[JwtTokenProcessor],
 ) -> HotelResponse:
     if await token_processor.validate_token(request.scope["auth"]) is None:
         raise InvalidTokenError
@@ -102,11 +108,11 @@ async def delete_hotel(
 @router.patch(path="/{id}", response_model=HotelResponse, dependencies=[Depends(auth_required)])
 @inject
 async def update_hotel(
-    id: uuid.UUID,
-    request: Request,
-    update_hotel_schema: UpdateHotelSchema,
-    update_hotel_interactor: FromDishka[UpdateHotelUseCase],
-    token_processor: FromDishka[JwtTokenProcessorImp],
+        id: uuid.UUID,
+        request: Request,
+        update_hotel_schema: UpdateHotelSchema,
+        update_hotel_interactor: FromDishka[UpdateHotelUseCase],
+        token_processor: FromDishka[JwtTokenProcessor],
 ) -> HotelResponse:
     if await token_processor.validate_token(request.scope["auth"]) is None:
         raise InvalidTokenError
@@ -118,14 +124,14 @@ async def update_hotel(
 
 @router.get("/{id}/rooms", response_model=RoomsListResponse)
 async def get_rooms_by_hotel_id(
-    rooms_request: Annotated[GetRoomsListRequest, Depends()], interactor: FromDishka[GetRoomsUseCase]
+        rooms_request: Annotated[GetRoomsListRequest, Depends()], interactor: FromDishka[GetRoomsUseCase]
 ) -> RoomsListResponse:
     return await interactor(rooms_request)
 
 
 @router.get("/{id}/rooms/{room_id}", response_model=RoomResponse)
 async def get_rooms_by_hotel_id_and_room_id(
-    rooms_request: Annotated[GetRoomRequest, Depends()], interactor: FromDishka[GetRoomUseCase]
+        rooms_request: Annotated[GetRoomRequest, Depends()], interactor: FromDishka[GetRoomUseCase]
 ) -> RoomResponse:
     response = await interactor(rooms_request)
     if response is None:
@@ -135,11 +141,11 @@ async def get_rooms_by_hotel_id_and_room_id(
 
 @router.post("/{id}/rooms/", response_model=RoomResponse, dependencies=[Depends(auth_required)])
 async def create_room(
-    id: uuid.UUID,
-    request: Request,
-    token_processor: FromDishka[JwtTokenProcessorImp],
-    create_room_schema: CreateRoomSchema,
-    interactor: FromDishka[CreateRoomUseCase],
+        id: uuid.UUID,
+        request: Request,
+        token_processor: FromDishka[JwtTokenProcessor],
+        create_room_schema: CreateRoomSchema,
+        interactor: FromDishka[CreateRoomUseCase],
 ) -> RoomResponse:
     if await token_processor.validate_token(request.scope["auth"]) is None:
         raise InvalidTokenError
@@ -148,12 +154,12 @@ async def create_room(
 
 @router.patch("/{id}/rooms/{room_id}", response_model=RoomResponse, dependencies=[Depends(auth_required)])
 async def update_room(
-    id: uuid.UUID,
-    room_id: uuid.UUID,
-    request: Request,
-    token_processor: FromDishka[JwtTokenProcessorImp],
-    update_room_schema: UpdateRoomSchema,
-    interactor: FromDishka[UpdateRoomUseCase],
+        id: uuid.UUID,
+        room_id: uuid.UUID,
+        request: Request,
+        token_processor: FromDishka[JwtTokenProcessor],
+        update_room_schema: UpdateRoomSchema,
+        interactor: FromDishka[UpdateRoomUseCase],
 ) -> RoomResponse:
     if await token_processor.validate_token(request.scope["auth"]) is None:
         raise InvalidTokenError
@@ -165,10 +171,10 @@ async def update_room(
 
 @router.delete("/{id}/rooms/{room_id}", response_model=RoomResponse, dependencies=[Depends(auth_required)])
 async def delete_room(
-    delete_room_request: Annotated[DeleteRoomRequest, Depends()],
-    request: Request,
-    token_processor: FromDishka[JwtTokenProcessorImp],
-    interactor: FromDishka[DeleteRoomUseCase],
+        delete_room_request: Annotated[DeleteRoomRequest, Depends()],
+        request: Request,
+        token_processor: FromDishka[JwtTokenProcessor],
+        interactor: FromDishka[DeleteRoomUseCase],
 ) -> RoomResponse:
     if await token_processor.validate_token(request.scope["auth"]) is None:
         raise InvalidTokenError

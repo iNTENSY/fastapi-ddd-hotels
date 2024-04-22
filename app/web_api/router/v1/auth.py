@@ -11,6 +11,7 @@ from app.application.contracts.authentication.authentication_response import (
 )
 from app.application.contracts.authentication.login_request import LoginRequest
 from app.application.contracts.authentication.register_request import RegisterRequest
+from app.application.protocols.jwt_processor import JwtTokenProcessor
 from app.application.usecase.authentication.login import Login
 from app.application.usecase.authentication.register import Register
 from app.domain.users.entity import UserEmail, UserId
@@ -25,7 +26,7 @@ async def login(
     response: Response,
     login_request: Annotated[OAuth2PasswordRequestForm, Depends()],
     interactor: FromDishka[Login],
-    token_processor: FromDishka[JwtTokenProcessorImp],
+    token_processor: FromDishka[JwtTokenProcessor],
 ) -> AuthResponse:
     user = await interactor(LoginRequest(email=login_request.username, password=login_request.password))
     token = await token_processor.generate_token(UserId(user.id), UserEmail(user.email))
