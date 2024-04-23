@@ -5,7 +5,9 @@ from app.application.contracts.hotels.update_hotels_request import UpdateHotelRe
 from app.application.protocols.interactor import Interactor
 from app.application.protocols.unitofwork import IUnitOfWork
 from app.domain.common.errors import UnprocessableEntityError
+from app.domain.hotels.entity import Hotels
 from app.domain.hotels.repository import IHotelRepository
+from app.infrastructure.persistence.mappers.hotel_mapper import hotel_from_dict_to_entity
 
 
 class UpdateHotelUseCase(Interactor[UpdateHotelRequest, HotelResponse]):
@@ -14,9 +16,9 @@ class UpdateHotelUseCase(Interactor[UpdateHotelRequest, HotelResponse]):
         self.hotels_repository = hotels_repository
 
     async def __call__(self, request: UpdateHotelRequest) -> HotelResponse | None:
-        data = {key: value for key, value in vars(request.content).items() if value}
+        hotel = await hotel_from_dict_to_entity({"id": request.id, **vars(request.content)})
         try:
-            hotel = await self.hotels_repository.update(data=data, id=request.id)
+            hotel = await self.hotels_repository.update(hotel)
             if not hotel:
                 return None
             await self.__uow.commit()

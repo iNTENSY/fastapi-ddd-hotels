@@ -5,6 +5,7 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.domain.common.value_object import DomainValueObject
 from app.domain.hotels.entity import Hotels
 from app.domain.hotels.repository import IHotelRepository
 from app.infrastructure.persistence.mappers.hotel_mapper import (
@@ -30,22 +31,27 @@ class HotelRepositoryImp(IHotelRepository):
 
     async def filter_by(self, **parameters) -> list[Hotels]:
         """Выбрать отели из БД с определенными параметрами."""
-        statement = select(HotelsModel).filter_by(**parameters)
+        statement = select(HotelsModel).filter_by(**{key: value_object.value for key, value_object in parameters.items()})
         result = (await self.__connection.execute(statement)).scalars().all()
-        return [await hotel_from_dict_to_entity(hotel.__dict__) for hotel in result]
+        return [await hotel_from_dict_to_entity(vars(hotel)) for hotel in result]
 
     async def delete(self, **parameters) -> Hotels | None:
         """Удалить отель по уникальному идентификатору из базы данных"""
-        statement = delete(HotelsModel).filter_by(**parameters).returning(HotelsModel)
+        statement = (
+            delete(HotelsModel)
+            .filter_by(
+                **{key: value_object.value for key, value_object in parameters.items()}
+            )
+            .returning(HotelsModel))
         result = (await self.__connection.execute(statement)).scalar_one_or_none()
         if result is None:
             return None
-        return await hotel_from_dict_to_entity(result.__dict__)
+        return await hotel_from_dict_to_entity(vars(result))
 
-    async def update(self, data: dict, id: uuid.UUID) -> Hotels | None:
+    async def update(self, domain: Hotels) -> Hotels | None:
         """Обновить отель по уникальному идентификатору"""
-        statement = update(HotelsModel).where(HotelsModel.id == id).values(**data).returning(HotelsModel)
+        statement = update(HotelsModel).where(HotelsModel.id == domain.id.value).values(await domain.raw()).returning(HotelsModel)
         result = (await self.__connection.execute(statement)).scalar_one_or_none()
         if result is None:
             return None
-        return await hotel_from_dict_to_entity(result.__dict__)
+        return await hotel_from_dict_to_entity(vars(result))

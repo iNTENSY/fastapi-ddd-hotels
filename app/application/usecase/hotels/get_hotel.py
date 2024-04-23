@@ -7,7 +7,7 @@ from app.application.contracts.hotels.hotels_response import (
     HotelsListResponse,
 )
 from app.application.protocols.interactor import Interactor
-from app.domain.hotels.entity import Hotels
+from app.domain.hotels.entity import Hotels, HotelId
 from app.domain.hotels.repository import IHotelRepository
 
 
@@ -25,7 +25,7 @@ class GetHotelUseCase(Interactor[GetHotelRequest, HotelResponse]):
         self.hotel_repository = hotels_repository
 
     async def __call__(self, request: GetHotelRequest) -> HotelResponse | None:
-        hotel = await self.hotel_repository.filter_by(id=request.id)
+        hotel = await self.hotel_repository.filter_by(id=HotelId(request.id))
         if not hotel:
             return None
         return await HotelResponse.create(hotel[0])

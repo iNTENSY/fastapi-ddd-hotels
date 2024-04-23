@@ -1,10 +1,10 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class UpdateHotelSchema:
-    name: str | None = None
-    location: str | None = None
-    services: list[str] | None = field(default_factory=list)
-    rooms_quantity: int | None = None
-    image_id: int | None = None
+    name: str
+    location: str
+    services: list[str]
+    rooms_quantity: int
+    image_id: int

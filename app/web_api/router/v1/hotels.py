@@ -49,7 +49,7 @@ router = APIRouter(prefix="/hotels", tags=["Hotels"], route_class=DishkaRoute)
 
 
 @router.get(path="/", response_model=HotelsListResponse, dependencies=[Depends(auth_required)])
-@cache(expire=60 * 10)
+# @cache(expire=60 * 10)
 @inject
 async def get_hotels(
     request: Request,
@@ -63,7 +63,7 @@ async def get_hotels(
 
 
 @router.get(path="/{id}", response_model=HotelResponse)
-@cache(expire=60 * 5)
+# @cache(expire=60 * 5)
 @inject
 async def get_hotel(
     get_hotel_request: Annotated[GetHotelRequest, Depends()],
