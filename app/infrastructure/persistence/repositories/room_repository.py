@@ -12,28 +12,28 @@ from app.infrastructure.persistence.models import RoomsModel
 
 class RoomRepositoryImp(IRoomRepository):
     def __init__(self, connection: AsyncSession):
-        self.connection = connection
+        self.__connection = connection
 
     async def create(self, domain: Rooms) -> None:
         """Create room in the hotel using hotel_id."""
         statement = insert(RoomsModel).values(await domain.raw()).returning(RoomsModel)
-        await self.connection.execute(statement)
+        await self.__connection.execute(statement)
 
     async def find_all(self, hotel_id: uuid.UUID, limit: int, offset: int) -> list[Rooms] | None:
         statement = select(RoomsModel).where(RoomsModel.hotel_id == hotel_id).limit(limit).offset(offset)
-        result = (await self.connection.execute(statement)).scalars().all()
+        result = (await self.__connection.execute(statement)).scalars().all()
         return [await room_from_dict_to_entity(room.__dict__) for room in result]
 
     async def filter_by(self, **parameters) -> list[Rooms]:
         """Выбрать номер из БД с определенными параметрами."""
         statement = select(RoomsModel).filter_by(**parameters)
-        result = (await self.connection.execute(statement)).scalars().all()
+        result = (await self.__connection.execute(statement)).scalars().all()
         return [await room_from_dict_to_entity(room.__dict__) for room in result]
 
     async def delete(self, **parameters) -> Rooms | None:
         """Удалить номер по уникальному идентификатору из базы данных"""
         statement = delete(RoomsModel).filter_by(**parameters).returning(RoomsModel)
-        result = (await self.connection.execute(statement)).scalar_one_or_none()
+        result = (await self.__connection.execute(statement)).scalar_one_or_none()
         if result is None:
             return None
         return await room_from_dict_to_entity(result.__dict__)
@@ -41,7 +41,7 @@ class RoomRepositoryImp(IRoomRepository):
     async def update(self, data: dict, id: uuid.UUID) -> Rooms | None:
         """Обновить номер по уникальному идентификатору"""
         statement = update(RoomsModel).where(RoomsModel.id == id).values(**data).returning(RoomsModel)
-        result = (await self.connection.execute(statement)).scalar_one_or_none()
+        result = (await self.__connection.execute(statement)).scalar_one_or_none()
         if result is None:
             return None
         return await room_from_dict_to_entity(result.__dict__)

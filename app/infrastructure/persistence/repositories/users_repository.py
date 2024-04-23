@@ -12,29 +12,29 @@ from app.infrastructure.persistence.models import UsersModel
 
 class UsersRepositoryImp(IUserRepository):
     def __init__(self, connection: AsyncSession):
-        self.connection = connection
+        self.__connection = connection
 
     async def create(self, domain: Users) -> None:
         """Создание в БД."""
         statement = insert(UsersModel).values(await domain.raw())
-        await self.connection.execute(statement)
+        await self.__connection.execute(statement)
 
     async def find_all(self, limit: int, offset: int) -> list[Users]:
         """Выбрать всех пользователей из БД."""
         statement = select(UsersModel).limit(limit).offset(offset)
-        result = (await self.connection.execute(statement)).scalars().all()
+        result = (await self.__connection.execute(statement)).scalars().all()
         return [await user_from_dict_to_entity(hotel.__dict__) for hotel in result]
 
     async def filter_by(self, **parameters) -> list[Users]:
         """Выбрать пользователей из БД с определенными параметрами."""
         statement = select(UsersModel).filter_by(**parameters)
-        result = (await self.connection.execute(statement)).scalars().all()
+        result = (await self.__connection.execute(statement)).scalars().all()
         return [await user_from_dict_to_entity(vars(user)) for user in result]
 
     async def delete(self, **parameters) -> Users | None:
         """Удалить пользователя по уникальному идентификатору из базы данных"""
         statement = delete(UsersModel).filter_by(**parameters).returning(UsersModel)
-        result = (await self.connection.execute(statement)).scalar_one_or_none()
+        result = (await self.__connection.execute(statement)).scalar_one_or_none()
         if result is None:
             return None
         return await user_from_dict_to_entity(result.__dict__)
@@ -42,7 +42,7 @@ class UsersRepositoryImp(IUserRepository):
     async def update(self, data: dict, id: uuid.UUID) -> Users | None:
         """Обновить пользователя по уникальному идентификатору"""
         statement = update(UsersModel).where(UsersModel.id == id).values(**data).returning(UsersModel)
-        result = (await self.connection.execute(statement)).scalar_one_or_none()
+        result = (await self.__connection.execute(statement)).scalar_one_or_none()
         if result is None:
             return None
         return await user_from_dict_to_entity(result.__dict__)
