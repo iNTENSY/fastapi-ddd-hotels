@@ -1,6 +1,7 @@
 import uuid
 from dataclasses import dataclass
 
+from app.domain.common.entity import DomainEntity
 from app.domain.common.value_object import DomainValueObject
 
 
@@ -20,7 +21,7 @@ class UserHashedPassword(DomainValueObject):
 
 
 @dataclass
-class Users:
+class Users(DomainEntity):
     id: UserId
     email: UserEmail
     hashed_password: UserHashedPassword

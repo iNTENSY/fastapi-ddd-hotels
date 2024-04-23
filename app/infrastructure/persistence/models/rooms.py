@@ -1,10 +1,8 @@
-from typing import Optional
-
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.infrastructure.persistence.models.base import Base, intpk, uuidpk
+from app.infrastructure.persistence.models.base import Base, uuidpk
 
 
 class RoomsModel(Base):

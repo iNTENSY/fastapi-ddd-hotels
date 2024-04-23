@@ -1,6 +1,7 @@
 import uuid
 from dataclasses import dataclass
 
+from app.domain.common.entity import DomainEntity
 from app.domain.common.value_object import DomainValueObject
 
 
@@ -45,7 +46,7 @@ class RoomImageId(DomainValueObject):
 
 
 @dataclass
-class Rooms:
+class Rooms(DomainEntity):
     id: RoomId
     hotel_id: RoomHotelId
     name: RoomName
