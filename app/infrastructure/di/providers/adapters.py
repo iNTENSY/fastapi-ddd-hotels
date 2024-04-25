@@ -31,7 +31,7 @@ class SqlalchemyProvider(Provider):
     def provide_config(self) -> DatabaseConfig:
         return DatabaseConfig.from_env()
 
-    @provide(scope=Scope.APP)
+    @provide(scope=Scope.APP, provides=AsyncEngine)
     def provide_engine(self, config: DatabaseConfig) -> AsyncEngine:
         return create_async_engine(config.db_uri)
 

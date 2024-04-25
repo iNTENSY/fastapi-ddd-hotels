@@ -8,7 +8,7 @@ from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
 from sqladmin import Admin
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 
 from app.infrastructure.admin.bookings import BookingAdmin
 from app.infrastructure.admin.hotels import HotelAdmin
@@ -41,7 +41,7 @@ async def lifespan(app: FastAPI):
     await aior.close()
 
 
-def init_admin_factory(app: FastAPI) -> None:
+def init_admin(app: FastAPI) -> None:
     """Init admin page."""
     admin = Admin(app, engine=create_async_engine(os.environ.get("DATABASE_URI")))
     admin.add_view(UsersAdmin)
@@ -54,10 +54,10 @@ def app_factory() -> FastAPI:
     """Entrypoint factory."""
     app = FastAPI(lifespan=lifespan)
 
-    init_admin_factory(app)
     init_di(app)
     init_exc_handlers(app)
     init_routers(app)
+    init_admin(app)
 
     return app
 
