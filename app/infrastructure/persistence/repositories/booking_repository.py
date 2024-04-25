@@ -1,11 +1,11 @@
-from sqlalchemy import select, and_, or_, text
+from sqlalchemy import select, and_, or_
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.bookings.entity import Bookings
 from app.domain.bookings.repository import IBookingRepository
 from app.infrastructure.persistence.mappers.booking_mapper import booking_dict_to_entity
-from app.infrastructure.persistence.models import BookingsModel, RoomsModel
+from app.infrastructure.persistence.models import BookingsModel
 
 
 class BookingRepository(IBookingRepository):
