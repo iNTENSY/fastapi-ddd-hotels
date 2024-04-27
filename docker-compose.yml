@@ -1,0 +1,53 @@
+version: "3.8"
+
+volumes:
+  pg_data:
+  grafanadata:
+
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    env_file: .env
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6380"
+
+  web:
+    build:
+      context: .
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+  nginx:
+    image: nginx:1.24
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - web
+
+  prometheus:
+    image: prom/prometheus:v2.43.0
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:9.4.7
+    container_name: grafana
+    volumes:
+      - grafanadata:/var/lib/grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
