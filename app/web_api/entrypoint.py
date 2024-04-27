@@ -6,9 +6,10 @@ from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
+from prometheus_fastapi_instrumentator import Instrumentator
 from redis import asyncio as aioredis
 from sqladmin import Admin
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.infrastructure.admin.bookings import BookingAdmin
 from app.infrastructure.admin.hotels import HotelAdmin
@@ -32,13 +33,13 @@ def init_routers(app: FastAPI) -> None:
     app.include_router(v1_routers)
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Start up event."""
-    aior = aioredis.from_url(RedisSettings(host="localhost", port=6379).url)
-    FastAPICache.init(RedisBackend(aior), prefix="cache")
-    yield
-    await aior.close()
+def init_metrics(app: FastAPI) -> None:
+    """Init prometheus."""
+    instrumentator = Instrumentator(
+        should_group_status_codes=False,
+        excluded_handlers=[".*admin.*", "/metrics"],
+    )
+    instrumentator.instrument(app).expose(app)
 
 
 def init_admin(app: FastAPI) -> None:
@@ -50,6 +51,15 @@ def init_admin(app: FastAPI) -> None:
     admin.add_view(BookingAdmin)
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI): # noqa
+    """Start up event."""
+    aior = aioredis.from_url(RedisSettings(host="localhost", port=6379).url)
+    FastAPICache.init(RedisBackend(aior), prefix="cache")
+    yield
+    await aior.close()
+
+
 def app_factory() -> FastAPI:
     """Entrypoint factory."""
     app = FastAPI(lifespan=lifespan)
@@ -58,6 +68,7 @@ def app_factory() -> FastAPI:
     init_exc_handlers(app)
     init_routers(app)
     init_admin(app)
+    init_metrics(app)
 
     return app
 
