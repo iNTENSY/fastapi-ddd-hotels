@@ -30,18 +30,12 @@ class RoomRepositoryImp(IRoomRepository):
         result = (await self.__connection.execute(statement)).scalars().all()
         return [await room_from_dict_to_entity(room.__dict__) for room in result]
 
-    async def delete(self, **parameters) -> Rooms | None:
+    async def delete(self, **parameters) -> None:
         """Удалить номер по уникальному идентификатору из базы данных"""
         statement = delete(RoomsModel).filter_by(**parameters).returning(RoomsModel)
-        result = (await self.__connection.execute(statement)).scalar_one_or_none()
-        if result is None:
-            return None
-        return await room_from_dict_to_entity(result.__dict__)
+        await self.__connection.execute(statement)
 
-    async def update(self, data: dict, id: uuid.UUID) -> Rooms | None:
+    async def update(self, data: dict, id: uuid.UUID) -> None:
         """Обновить номер по уникальному идентификатору"""
         statement = update(RoomsModel).where(RoomsModel.id == id).values(**data).returning(RoomsModel)
         result = (await self.__connection.execute(statement)).scalar_one_or_none()
-        if result is None:
-            return None
-        return await room_from_dict_to_entity(result.__dict__)
